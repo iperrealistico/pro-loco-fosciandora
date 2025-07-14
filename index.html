@@ -1,636 +1,354 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+/**
+ * Pro Loco Fosciandora - JavaScript principale
+ * Gestisce interattività, lazy loading, e ottimizzazioni performance
+ */
+
+// Configurazione globale
+const CONFIG = {
+    slideInterval: 5000, // Intervallo slideshow in ms
+    scrollOffset: 100,   // Offset per smooth scroll
+    lazyLoadOffset: 50   // Offset per lazy loading
+};
+
+// Stato dell'applicazione
+const state = {
+    currentSlide: 0,
+    isMenuOpen: false,
+    hasAcceptedCookies: localStorage.getItem('cookiesAccepted') === 'true'
+};
+
+/**
+ * Inizializzazione al caricamento del DOM
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    initNavbar();
+    initHeroSlideshow();
+    initLazyLoading();
+    initSmoothScroll();
+    initContactForm();
+    initCookieBanner();
+    initMobileMenu();
+});
+
+/**
+ * Gestione Navbar - Effetto scroll e active state
+ */
+function initNavbar() {
+    const navbar = document.getElementById('navbar');
+    const navLinks = document.querySelectorAll('.nav-link');
     
-    <!-- SEO Meta Tags -->
-    <title>Pro Loco Fosciandora - Trekking, Natura e Tradizioni in Garfagnana</title>
-    <meta name="description" content="Scopri Fosciandora e le sue frazioni nella Garfagnana. Percorsi trekking, mountain bike, natura incontaminata tra le Alpi Apuane. Eventi, tradizioni e sapori locali.">
-    <meta name="keywords" content="Fosciandora, Garfagnana, trekking, mountain bike, natura, Alpi Apuane, Pro Loco, sentieri, escursioni, turismo">
-    <meta name="author" content="Pro Loco Fosciandora">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://www.prolocofosciandora.it">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.prolocofosciandora.it">
-    <meta property="og:title" content="Pro Loco Fosciandora - Trekking e Natura in Garfagnana">
-    <meta property="og:description" content="Scopri i sentieri, la natura e le tradizioni di Fosciandora. Percorsi trekking e MTB tra le Alpi Apuane.">
-    <meta property="og:image" content="https://www.prolocofosciandora.it/images/proloco-fosciandora-panorama-treppignana.jpg">
-    <meta property="og:locale" content="it_IT">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.prolocofosciandora.it">
-    <meta property="twitter:title" content="Pro Loco Fosciandora - Trekking e Natura in Garfagnana">
-    <meta property="twitter:description" content="Scopri i sentieri, la natura e le tradizioni di Fosciandora. Percorsi trekking e MTB tra le Alpi Apuane.">
-    <meta property="twitter:image" content="https://www.prolocofosciandora.it/images/proloco-fosciandora-panorama-treppignana.jpg">
-    
-    <!-- Preconnect per performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Critical CSS inline per performance -->
-    <style>
-        /* Reset e stili base critici */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    // Effetto navbar su scroll
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
         }
         
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #fff;
-        }
-        
-        /* Hero section critica */
-        .hero {
-            position: relative;
-            height: 100vh;
-            min-height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: #1a5f3f;
-        }
-        
-        /* Navbar critica */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(26, 95, 63, 0.95);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        
-        /* Container responsive */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Lazy loading placeholder */
-        .lazy-img {
-            background: #f0f0f0;
-            min-height: 200px;
-        }
-    </style>
+        // Update active nav link
+        updateActiveNavLink();
+    });
     
-    <!-- Font Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    
-    <!-- CSS principale caricato in modo asincrono -->
-    <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="styles.css"></noscript>
-    
-    <!-- Structured Data Schema.org -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": ["LocalBusiness", "TouristDestination"],
-        "name": "Pro Loco Fosciandora",
-        "description": "Associazione di promozione turistica del territorio di Fosciandora in Garfagnana. Trekking, mountain bike e natura tra le Alpi Apuane.",
-        "image": "https://www.prolocofosciandora.it/images/proloco-fosciandora-panorama-treppignana.jpg",
-        "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Piazza degli Emigranti 1",
-            "addressLocality": "Fosciandora",
-            "addressRegion": "LU",
-            "postalCode": "55022",
-            "addressCountry": "IT"
-        },
-        "geo": {
-            "@type": "GeoCoordinates",
-            "latitude": 44.1333,
-            "longitude": 10.4667
-        },
-        "telephone": "+393347236729",
-        "url": "https://www.prolocofosciandora.it",
-        "sameAs": [
-            "https://www.facebook.com/prolocofosciandora",
-            "https://www.instagram.com/prolocofosciandora"
-        ],
-        "priceRange": "€",
-        "openingHours": "Mo-Su 09:00-18:00",
-        "hasMap": "https://goo.gl/maps/fosciandora"
+    // Evidenzia link attivo in base alla sezione visibile
+    function updateActiveNavLink() {
+        const sections = document.querySelectorAll('section[id]');
+        const scrollY = window.pageYOffset;
+        
+        sections.forEach(section => {
+            const sectionHeight = section.offsetHeight;
+            const sectionTop = section.offsetTop - CONFIG.scrollOffset;
+            const sectionId = section.getAttribute('id');
+            
+            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
     }
-    </script>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar" id="navbar">
-        <div class="container">
-            <div class="nav-wrapper">
-                <!-- Logo -->
-                <div class="nav-logo">
-                    <a href="#home">Pro Loco Fosciandora</a>
-                </div>
-                
-                <!-- Menu Mobile Toggle -->
-                <button class="nav-toggle" id="navToggle" aria-label="Apri menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                
-                <!-- Menu Links -->
-                <ul class="nav-menu" id="navMenu">
-                    <li><a href="#home" class="nav-link">Home</a></li>
-                    <li><a href="#chi-siamo" class="nav-link">Chi Siamo</a></li>
-                    <li><a href="#scopri" class="nav-link">Il Territorio</a></li>
-                    <li><a href="#natura-trekking" class="nav-link">Natura & Trekking</a></li>
-                    <li><a href="#come-arrivare" class="nav-link">Come Arrivare</a></li>
-                    <li><a href="#contatti" class="nav-link">Contatti</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+}
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <!-- Background Slideshow -->
-        <div class="hero-slideshow">
-            <img src="images/proloco-fosciandora-panorama-treppignana.jpg" 
-                 alt="Panorama di Fosciandora dalla frazione di Treppignana" 
-                 class="hero-slide active">
-            <img data-src="images/proloco-fosciandora-lupinaia.jpg" 
-                 alt="Vista panoramica di Lupinaia" 
-                 class="hero-slide lazy-img">
-            <img data-src="images/proloco-fosciandora-riana-garfagnanadream.jpg" 
-                 alt="Il borgo di Riana in Garfagnana" 
-                 class="hero-slide lazy-img">
-            <img data-src="images/proloco-fosciandora-fosciandora.jpg" 
-                 alt="Veduta del capoluogo Fosciandora" 
-                 class="hero-slide lazy-img">
-        </div>
+/**
+ * Hero Slideshow automatico
+ */
+function initHeroSlideshow() {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length <= 1) return;
+    
+    setInterval(() => {
+        slides[state.currentSlide].classList.remove('active');
+        state.currentSlide = (state.currentSlide + 1) % slides.length;
+        slides[state.currentSlide].classList.add('active');
+    }, CONFIG.slideInterval);
+}
+
+/**
+ * Lazy Loading per immagini e iframe
+ */
+function initLazyLoading() {
+    const lazyImages = document.querySelectorAll('img[data-src]');
+    const lazyIframes = document.querySelectorAll('iframe[data-src]');
+    
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy-img');
+                img.removeAttribute('data-src');
+                observer.unobserve(img);
+            }
+        });
+    }, {
+        rootMargin: `${CONFIG.lazyLoadOffset}px`
+    });
+    
+    // Osserva tutte le immagini lazy
+    lazyImages.forEach(img => imageObserver.observe(img));
+    
+    // Lazy load per iframe (mappa)
+    lazyIframes.forEach(iframe => {
+        imageObserver.observe(iframe);
+    });
+}
+
+/**
+ * Smooth Scroll per link interni
+ */
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetSection = document.querySelector(targetId);
+            if (targetSection) {
+                const offsetTop = targetSection.offsetTop - CONFIG.scrollOffset;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+                
+                // Chiudi menu mobile se aperto
+                if (state.isMenuOpen) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+    });
+}
+
+/**
+ * Menu Mobile Toggle
+ */
+function initMobileMenu() {
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    navToggle.addEventListener('click', toggleMobileMenu);
+    
+    // Chiudi menu quando si clicca fuori
+    document.addEventListener('click', (e) => {
+        if (state.isMenuOpen && !navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+            toggleMobileMenu();
+        }
+    });
+}
+
+function toggleMobileMenu() {
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
+    
+    state.isMenuOpen = !state.isMenuOpen;
+    navToggle.classList.toggle('active');
+    navMenu.classList.toggle('active');
+}
+
+/**
+ * Form di contatto con validazione
+ */
+function initContactForm() {
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        <!-- Hero Content -->
-        <div class="hero-content">
-            <h1 class="hero-title">Benvenuti a Fosciandora</h1>
-            <p class="hero-subtitle">Storia, natura e sapori autentici nel cuore verde della Garfagnana</p>
-            <a href="#scopri" class="btn btn-primary">Scopri il territorio</a>
-        </div>
+        // Validazione base
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
         
-        <!-- Scroll Indicator -->
-        <div class="scroll-indicator">
-            <span>Scorri per esplorare</span>
-            <svg class="scroll-arrow" viewBox="0 0 24 24">
-                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-            </svg>
-        </div>
-    </section>
+        if (!validateEmail(data.email)) {
+            showNotification('Inserisci un indirizzo email valido', 'error');
+            return;
+        }
+        
+        // Simula invio (sostituire con vera API)
+        try {
+            // Mostra loading
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Invio in corso...';
+            submitBtn.disabled = true;
+            
+            // Simula delay network
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Successo
+            showNotification('Messaggio inviato con successo! Ti risponderemo presto.', 'success');
+            form.reset();
+            
+            // Ripristina bottone
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+            
+        } catch (error) {
+            showNotification('Si è verificato un errore. Riprova più tardi.', 'error');
+        }
+    });
+}
 
-    <!-- Chi Siamo Section -->
-    <section class="section" id="chi-siamo">
-        <div class="container">
-            <h2 class="section-title">Chi Siamo</h2>
-            <div class="section-intro">
-                <p>La Pro Loco Fosciandora, fondata ufficialmente nell'ottobre 2020, è il cuore pulsante della promozione turistica e culturale del nostro territorio montano.</p>
-            </div>
-            
-            <div class="grid grid-2">
-                <div class="content-block">
-                    <h3>La Nostra Missione</h3>
-                    <p>Siamo un'associazione di volontari appassionati che lavora per valorizzare le bellezze naturali, storiche e culturali di Fosciandora e delle sue sette frazioni. Il nostro obiettivo è preservare le tradizioni locali mentre accogliamo visitatori da ogni dove, mostrando loro i tesori nascosti della Garfagnana attraverso eventi, escursioni guidate e iniziative culturali.</p>
-                    <p>Collaboriamo attivamente con le istituzioni locali, le altre Pro Loco della zona e le associazioni sportive per creare una rete di turismo sostenibile che rispetti l'ambiente montano e valorizzi le peculiarità di ogni borgo.</p>
-                </div>
-                
-                <div class="content-block">
-                    <h3>Il Nostro Direttivo</h3>
-                    <ul class="team-list">
-                        <li><strong>Raffaella Biagioni</strong> - Vice Presidente</li>
-                        <li><strong>Giulia Toni</strong> - Segretaria</li>
-                        <li><strong>Stefania Lunardi</strong> - Tesoriere</li>
-                        <li><strong>Massimo Bergamini</strong> - Consigliere</li>
-                        <li><strong>Rebecca Biagioni</strong> - Consigliere</li>
-                        <li><strong>Roberto Donati</strong> - Consigliere</li>
-                    </ul>
-                    <p>Un team dinamico e motivato che lavora con passione per far conoscere le meraviglie del nostro territorio montano.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+/**
+ * Cookie Banner
+ */
+function initCookieBanner() {
+    const banner = document.getElementById('cookieBanner');
+    if (!banner) return;
+    
+    if (!state.hasAcceptedCookies) {
+        setTimeout(() => {
+            banner.classList.add('show');
+        }, 2000);
+    }
+}
 
-    <!-- Natura e Trekking Section -->
-    <section class="section section-featured" id="natura-trekking">
-        <div class="container">
-            <h2 class="section-title">Natura, Trekking e Mountain Bike</h2>
-            <div class="section-intro">
-                <p>Fosciandora è un paradiso per gli amanti della natura e delle attività all'aria aperta, con oltre 100 km di sentieri che attraversano boschi secolari, alpeggi e crinali panoramici.</p>
-            </div>
-            
-            <div class="grid grid-3">
-                <div class="feature-card">
-                    <img data-src="images/proloco-fosciandora-strada-monti-autunno.jpg" 
-                         alt="Sentiero montano in autunno" 
-                         class="lazy-img feature-img">
-                    <h3>Trekking e Escursionismo</h3>
-                    <p>I sentieri di Fosciandora offrono percorsi per tutti i livelli, dal semplice passeggio nei borghi alle escursioni impegnative verso le vette delle Alpi Apuane. Il celebre <strong>Sentiero 00</strong> parte da Lupinaia e conduce attraverso faggete centenarie fino agli alpeggi di Prade Garfagnine, con viste mozzafiato sulla catena appenninica.</p>
-                    <p>Per mappe dettagliate e itinerari completi, visita la piattaforma ufficiale <a href="https://www.sentieridelletreterre.it/" target="_blank" rel="noopener">Sentieri delle Tre Terre</a>, dove troverai percorsi GPS, difficoltà e tempi di percorrenza.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <img data-src="images/proloco-fosciandora-lupinaia-campi-lavacchio.jpg" 
-                         alt="Mountain bike nei prati di Lavacchio" 
-                         class="lazy-img feature-img">
-                    <h3>Mountain Bike</h3>
-                    <p>Gli appassionati di MTB trovano a Fosciandora un territorio ideale con percorsi che spaziano dalle tranquille sterrate di fondovalle ai single track tecnici sui crinali. La zona di <strong>La Villa</strong> è particolarmente apprezzata per i suoi trail naturali che si snodano tra castagneti e radure panoramiche.</p>
-                    <p>I percorsi per mountain bike sono ben segnalati e offrono diversi livelli di difficoltà, dalle pedalate familiari ai circuiti enduro più impegnativi per i rider esperti.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <img data-src="images/proloco-fosciandora-ceserana-autunno.jpg" 
-                         alt="Foliage autunnale a Ceserana" 
-                         class="lazy-img feature-img">
-                    <h3>Flora e Fauna</h3>
-                    <p>Il territorio di Fosciandora è un vero scrigno di biodiversità. I boschi misti di castagni, faggi e querce ospitano una ricca fauna selvatica: caprioli, cinghiali, volpi e numerose specie di uccelli rapaci. In primavera, i prati si colorano di orchidee selvatiche e fiori montani.</p>
-                    <p>Le diverse stagioni regalano spettacoli naturali unici: dal foliage autunnale che tinge di rosso e oro i boschi, alle fioriture primaverili, fino ai paesaggi innevati dell'inverno che trasformano i borghi in cartoline viventi.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+function acceptCookies() {
+    localStorage.setItem('cookiesAccepted', 'true');
+    document.getElementById('cookieBanner').classList.remove('show');
+}
 
-    <!-- Scopri il Territorio Section -->
-    <section class="section" id="scopri">
-        <div class="container">
-            <h2 class="section-title">Scopri le Sette Frazioni</h2>
-            <div class="section-intro">
-                <p>Il comune di Fosciandora si compone di sette affascinanti frazioni, ognuna con la propria identità, storia e tradizioni uniche.</p>
-            </div>
-            
-            <!-- Fosciandora Capoluogo -->
-            <div class="frazione-card">
-                <div class="frazione-content">
-                    <h3>Fosciandora Capoluogo</h3>
-                    <p>Il capoluogo, arroccato a 550 metri di altitudine, domina la valle con viste spettacolari sulle Alpi Apuane. Il borgo conserva l'impianto medievale con strette viuzze lastricate che si aprono su piazzette panoramiche. Da non perdere la <strong>Chiesa di San Sebastiano</strong> con affreschi del XVI secolo e la <strong>Chiesa di Sant'Agostino</strong>, esempio di architettura romanica garfagnina.</p>
-                    <p>La maestosa <strong>Villa Raffaelli</strong>, residenza storica del XIX secolo, ospita oggi eventi culturali e mostre. I sentieri che partono dal paese conducono verso gli alpeggi e offrono scorci indimenticabili sulla valle del Serchio.</p>
-                </div>
-                <div class="frazione-images">
-                    <img data-src="images/proloco-fosciandora-fosciandora.jpg" 
-                         alt="Vista del borgo di Fosciandora" 
-                         class="lazy-img">
-                    <img data-src="images/proloco-fosciandora-arco-villa-raffaelli.jpg" 
-                         alt="Arco storico di Villa Raffaelli" 
-                         class="lazy-img">
-                </div>
-            </div>
-            
-            <!-- Ceserana -->
-            <div class="frazione-card reverse">
-                <div class="frazione-content">
-                    <h3>Ceserana</h3>
-                    <p>Antico borgo fortificato che conserva i resti del <strong>Castello Estense</strong>, testimonianza del dominio degli Estensi in Garfagnana. La <strong>Chiesa romanica di San Andrea</strong> (XI secolo) custodisce preziosi arredi sacri e un organo storico del 1700.</p>
-                    <p>Il <strong>Museo nella Rocca</strong> racconta la storia del territorio attraverso reperti archeologici e documenti storici. Da Ceserana partono sentieri panoramici che conducono verso i boschi di castagno e le antiche mulattiere che collegavano la Garfagnana con la Lunigiana.</p>
-                </div>
-                <div class="frazione-images">
-                    <img data-src="images/proloco-fosciandora-ceserana.jpg" 
-                         alt="Panorama di Ceserana" 
-                         class="lazy-img">
-                    <img data-src="images/proloco-fosciandora-ceserana-inverno.jpg" 
-                         alt="Ceserana sotto la neve" 
-                         class="lazy-img">
-                </div>
-            </div>
-            
-            <!-- La Villa -->
-            <div class="frazione-card">
-                <div class="frazione-content">
-                    <h3>La Villa</h3>
-                    <p>Frazione immersa nel verde dei castagneti secolari, La Villa è il punto di partenza ideale per escursioni verso l'<strong>alpeggio di Prade Garfagnine</strong>. La <strong>Chiesa di Santa Maria Assunta</strong> conserva opere d'arte sacra di pregio e offre una vista panoramica sulla valle.</p>
-                    <p>I percorsi per mountain bike e trekking che attraversano La Villa sono tra i più apprezzati della zona, con dislivelli moderati adatti anche alle famiglie. In autunno, i boschi circostanti si trasformano in un mare di colori caldi, ideale per la raccolta di castagne e funghi.</p>
-                </div>
-                <div class="frazione-images">
-                    <img data-src="images/proloco-fosciandora-lavilla.jpg" 
-                         alt="Il borgo di La Villa" 
-                         class="lazy-img">
-                    <img data-src="images/proloco-fosciandora-lavilla-ceserana-da-lontano.jpg" 
-                         alt="Vista panoramica di La Villa e Ceserana" 
-                         class="lazy-img">
-                </div>
-            </div>
-            
-            <!-- Lupinaia -->
-            <div class="frazione-card reverse">
-                <div class="frazione-content">
-                    <h3>Lupinaia</h3>
-                    <p>Borgo agricolo che deve il nome alla coltivazione del lupino, Lupinaia conserva intatta l'atmosfera rurale della Garfagnana. La <strong>Chiesa dei Santi Pietro e Paolo</strong> e l'<strong>Oratorio della Madonna delle Grazie</strong> sono esempi di architettura religiosa locale.</p>
-                    <p>Da qui parte il famoso <strong>Sentiero 00</strong>, uno dei percorsi escursionistici più suggestivi della zona, che attraversa i <strong>campi di Lavacchio</strong> e conduce verso le alte vette. La frazione è anche nota per la produzione di formaggi d'alpeggio e miele di castagno.</p>
-                </div>
-                <div class="frazione-images">
-                    <img data-src="images/proloco-fosciandora-lupinaia.jpg" 
-                         alt="Vista di Lupinaia" 
-                         class="lazy-img">
-                    <img data-src="images/lupinaia-2-fosciandora-pro-loco-garfagnanadream-leonardo-fiori.jpg" 
-                         alt="Lupinaia foto di Leonardo Fiori" 
-                         class="lazy-img">
-                </div>
-            </div>
-            
-            <!-- Riana -->
-            <div class="frazione-card">
-                <div class="frazione-content">
-                    <h3>Riana</h3>
-                    <p>Piccolo gioiello arroccato sul versante soleggiato della valle, Riana è famosa per il suo <strong>campanile orientaleggiante</strong> unico in Garfagnana e per il <strong>Cristo nero ligneo</strong> del XVII secolo conservato nella chiesa parrocchiale.</p>
-                    <p>I terrazzamenti coltivati a vite producono vini di qualità, mentre gli oliveti centenari regalano un olio extravergine pregiato. Il borgo mantiene vive le tradizioni con feste patronali e sagre che celebrano i prodotti tipici locali.</p>
-                </div>
-                <div class="frazione-images">
-                    <img data-src="images/proloco-fosciandora-riana.jpg" 
-                         alt="Il borgo di Riana" 
-                         class="lazy-img">
-                    <img data-src="images/proloco-fosciandora-riana-garfagnanadream.jpg" 
-                         alt="Scorcio caratteristico di Riana" 
-                         class="lazy-img">
-                </div>
-            </div>
-            
-            <!-- Treppignana -->
-            <div class="frazione-card reverse">
-                <div class="frazione-content">
-                    <h3>Treppignana</h3>
-                    <p>Borgo panoramico che offre una delle viste più spettacolari sulla valle del Serchio e sulle Alpi Apuane. La <strong>Chiesa di San Martino</strong> conserva affreschi medievali recentemente restaurati. I vicoli in pietra serena raccontano secoli di storia contadina.</p>
-                    <p>Treppignana è il punto di partenza per escursioni verso i crinali che separano la Garfagnana dalla Lunigiana. In inverno, quando la neve imbianca i tetti in ardesia, il borgo diventa una cartolina vivente che attrae fotografi e amanti della montagna.</p>
-                </div>
-                <div class="frazione-images">
-                    <img data-src="images/proloco-fosciandora-treppignana.jpg" 
-                         alt="Vista di Treppignana" 
-                         class="lazy-img">
-                    <img data-src="images/proloco-fosciandora-treppignana-neve.jpg" 
-                         alt="Treppignana sotto la neve" 
-                         class="lazy-img">
-                </div>
-            </div>
-            
-            <!-- Migliano -->
-            <div class="frazione-card">
-                <div class="frazione-content">
-                    <h3>Migliano</h3>
-                    <p>Sede del Municipio e centro amministrativo, Migliano unisce servizi moderni al fascino del borgo antico. Il <strong>Santuario della Madonna della Stella</strong> è meta di pellegrinaggi e offre una vista panoramica eccezionale. La <strong>Chiesa di San Michele</strong> custodisce opere d'arte sacra di notevole valore.</p>
-                    <p>Il borgo ospita la sede operativa della Pro Loco presso la Scuola R. Raffaelli in Piazza degli Emigranti. Da Migliano partono numerosi sentieri CAI che conducono verso le vette circostanti e i borghi limitrofi.</p>
-                </div>
-                <div class="frazione-images">
-                    <img data-src="images/proloco-fosciandora-migliano.jpg" 
-                         alt="Il borgo di Migliano" 
-                         class="lazy-img">
-                    <img data-src="images/proloco-fosciandora-migliano-santuario-con-neve.jpg" 
-                         alt="Santuario di Migliano innevato" 
-                         class="lazy-img">
-                </div>
-            </div>
-        </div>
-    </section>
+/**
+ * Apertura Google Maps con indicazioni
+ */
+function openGoogleMaps(from) {
+    const destination = 'Fosciandora, LU, Italia';
+    let origin = '';
+    
+    switch(from) {
+        case 'lucca':
+            origin = 'Lucca, LU, Italia';
+            break;
+        case 'pisa':
+            origin = 'Pisa, PI, Italia';
+            break;
+        case 'firenze':
+            origin = 'Firenze, FI, Italia';
+            break;
+        default:
+            origin = '';
+    }
+    
+    const url = `https://www.google.com/maps/dir/${encodeURIComponent(origin)}/${encodeURIComponent(destination)}`;
+    window.open(url, '_blank');
+}
 
-    <!-- Come Arrivare Section -->
-    <section class="section section-alt" id="come-arrivare">
-        <div class="container">
-            <h2 class="section-title">Come Arrivare</h2>
-            <div class="section-intro">
-                <p>Fosciandora è facilmente raggiungibile dalle principali città toscane. Situata nel cuore della Garfagnana, offre un facile accesso a tutti i borghi e sentieri del territorio.</p>
-            </div>
-            
-            <div class="grid grid-3">
-                <div class="route-card">
-                    <h3>Da Lucca</h3>
-                    <p>Percorri la SR445 in direzione Castelnuovo di Garfagnana. Circa 4 km prima di Castelnuovo, svolta a destra seguendo le indicazioni per Fosciandora. Dopo 3 km raggiungerai il centro del paese.</p>
-                    <p><strong>Distanza:</strong> 45 km<br>
-                    <strong>Tempo:</strong> 50 minuti</p>
-                    <button class="btn btn-secondary" onclick="openGoogleMaps('lucca')">
-                        <svg class="icon"><use href="#icon-map"></use></svg>
-                        Indicazioni da Lucca
-                    </button>
-                </div>
-                
-                <div class="route-card">
-                    <h3>Da Pisa</h3>
-                    <p>Prendi la SS12 in direzione Lucca, poi prosegui sulla SR445 verso la Garfagnana seguendo le indicazioni sopra descritte.</p>
-                    <p><strong>Distanza:</strong> 70 km<br>
-                    <strong>Tempo:</strong> 1 ora 20 minuti</p>
-                    <button class="btn btn-secondary" onclick="openGoogleMaps('pisa')">
-                        <svg class="icon"><use href="#icon-map"></use></svg>
-                        Indicazioni da Pisa
-                    </button>
-                </div>
-                
-                <div class="route-card">
-                    <h3>Da Firenze</h3>
-                    <p>Prendi l'autostrada A11 fino all'uscita Lucca Est, poi segui le indicazioni per la Garfagnana sulla SR445.</p>
-                    <p><strong>Distanza:</strong> 115 km<br>
-                    <strong>Tempo:</strong> 1 ora 45 minuti</p>
-                    <button class="btn btn-secondary" onclick="openGoogleMaps('firenze')">
-                        <svg class="icon"><use href="#icon-map"></use></svg>
-                        Indicazioni da Firenze
-                    </button>
-                </div>
-            </div>
-            
-            <div class="map-container">
-                <iframe 
-                    data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2876.1234!2d10.4667!3d44.1333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDTCsDA4JzAwLjAiTiAxMMKwMjgnMDAuMCJF!5e0!3m2!1sit!2sit!4v1234567890" 
-                    class="lazy-map"
-                    width="100%" 
-                    height="400" 
-                    style="border:0;" 
-                    allowfullscreen="" 
-                    loading="lazy" 
-                    referrerpolicy="no-referrer-when-downgrade"
-                    title="Mappa di Fosciandora">
-                </iframe>
-            </div>
-        </div>
-    </section>
+/**
+ * Richiesta tesseramento
+ */
+function contattiTesseramento() {
+    const subject = encodeURIComponent('Richiesta Tesseramento Pro Loco');
+    const body = encodeURIComponent('Salve, vorrei ricevere informazioni sul tesseramento alla Pro Loco Fosciandora.\n\nNome:\nCognome:\nTelefono:\n\nGrazie');
+    window.location.href = `mailto:info@prolocofosciandora.it?subject=${subject}&body=${body}`;
+}
 
-    <!-- Servizi e Tesseramento Section -->
-    <section class="section" id="servizi">
-        <div class="container">
-            <h2 class="section-title">Servizi & Tesseramento</h2>
-            
-            <div class="grid grid-2">
-                <div class="service-card">
-                    <h3>Diventa Socio</h3>
-                    <p>Con la <strong>Tessera Unica Pro Loco</strong> sostieni le nostre attività e ottieni vantaggi esclusivi:</p>
-                    <ul class="benefits-list">
-                        <li>Quota annuale: solo <strong>5€</strong></li>
-                        <li>Sconti presso strutture convenzionate</li>
-                        <li>Accesso prioritario agli eventi</li>
-                        <li>Newsletter con itinerari esclusivi</li>
-                        <li>Convenzioni nazionali UNPLI</li>
-                    </ul>
-                    <button class="btn btn-primary" onclick="contattiTesseramento()">Richiedi la tessera</button>
-                </div>
-                
-                <div class="service-card">
-                    <h3>La Nostra Sede</h3>
-                    <p><strong>Sede operativa:</strong><br>
-                    Piazza degli Emigranti 1<br>
-                    Scuola R. Raffaelli - Migliano<br>
-                    55022 Fosciandora (LU)</p>
-                    
-                    <p><strong>Indirizzo postale:</strong><br>
-                    c/o Municipio<br>
-                    Via Roma 6 - Migliano<br>
-                    55022 Fosciandora (LU)</p>
-                    
-                    <p class="opening-hours">
-                        <svg class="icon"><use href="#icon-clock"></use></svg>
-                        Apertura su appuntamento
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+/**
+ * Utilities
+ */
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
 
-    <!-- Contatti Section -->
-    <section class="section section-contact" id="contatti">
-        <div class="container">
-            <h2 class="section-title">Contatti</h2>
-            
-            <div class="contact-wrapper">
-                <div class="contact-info">
-                    <h3>Resta in contatto con noi</h3>
-                    <p>Per informazioni turistiche, eventi, tesseramento o collaborazioni, non esitare a contattarci.</p>
-                    
-                    <div class="contact-item">
-                        <svg class="icon"><use href="#icon-phone"></use></svg>
-                        <div>
-                            <h4>Telefono</h4>
-                            <a href="tel:+393347236729">+39 334 723 6729</a>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <svg class="icon"><use href="#icon-email"></use></svg>
-                        <div>
-                            <h4>Email</h4>
-                            <a href="mailto:info@prolocofosciandora.it">info@prolocofosciandora.it</a>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-item">
-                        <svg class="icon"><use href="#icon-social"></use></svg>
-                        <div>
-                            <h4>Seguici sui social</h4>
-                            <div class="social-links">
-                                <a href="https://www.facebook.com/prolocofosciandora" target="_blank" rel="noopener" aria-label="Facebook">
-                                    <svg class="social-icon"><use href="#icon-facebook"></use></svg>
-                                </a>
-                                <a href="https://www.instagram.com/prolocofosciandora" target="_blank" rel="noopener" aria-label="Instagram">
-                                    <svg class="social-icon"><use href="#icon-instagram"></use></svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <form class="contact-form" id="contactForm">
-                    <h3>Inviaci un messaggio</h3>
-                    <div class="form-group">
-                        <label for="name">Nome e Cognome</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Messaggio</label>
-                        <textarea id="message" name="message" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Invia messaggio</button>
-                </form>
-            </div>
-        </div>
-    </section>
+function showNotification(message, type = 'info') {
+    // Crea elemento notifica
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    // Stili inline per la notifica
+    Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '1rem 2rem',
+        backgroundColor: type === 'success' ? '#4caf50' : '#f44336',
+        color: 'white',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+        zIndex: '3000',
+        opacity: '0',
+        transform: 'translateY(-20px)',
+        transition: 'all 0.3s ease'
+    });
+    
+    document.body.appendChild(notification);
+    
+    // Animazione entrata
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Rimozione automatica
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>Pro Loco Fosciandora</h4>
-                    <p>Promuoviamo il territorio di Fosciandora valorizzando natura, cultura e tradizioni della Garfagnana.</p>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Link Rapidi</h4>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#chi-siamo">Chi Siamo</a></li>
-                        <li><a href="#scopri">Il Territorio</a></li>
-                        <li><a href="#natura-trekking">Natura & Trekking</a></li>
-                        <li><a href="#contatti">Contatti</a></li>
-                        <li><a href="https://www.sentieridelletreterre.it/" target="_blank" rel="noopener">Sentieri delle Tre Terre</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Seguici</h4>
-                    <div class="social-links">
-                        <a href="https://www.facebook.com/prolocofosciandora" target="_blank" rel="noopener" aria-label="Facebook">
-                            <svg class="social-icon"><use href="#icon-facebook"></use></svg>
-                        </a>
-                        <a href="https://www.instagram.com/prolocofosciandora" target="_blank" rel="noopener" aria-label="Instagram">
-                            <svg class="social-icon"><use href="#icon-instagram"></use></svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; 2024 Pro Loco Fosciandora - Tutti i diritti riservati</p>
-                <p>Realizzato con <span class="heart">❤</span> da <a href="https://www.garfagnanadream.it" target="_blank" rel="noopener">Garfagnanadream.it</a></p>
-            </div>
-        </div>
-    </footer>
+/**
+ * Performance: Debounce per eventi scroll/resize
+ */
+function debounce(func, wait = 100) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
-    <!-- Cookie Banner -->
-    <div class="cookie-banner" id="cookieBanner">
-        <div class="cookie-content">
-            <p>Questo sito utilizza cookie tecnici per migliorare la tua esperienza di navigazione.</p>
-            <div class="cookie-actions">
-                <button class="btn btn-secondary" onclick="acceptCookies()">Accetta</button>
-                <a href="/privacy" class="cookie-link">Privacy Policy</a>
-            </div>
-        </div>
-    </div>
+/**
+ * Ottimizzazione: Request Animation Frame per animazioni smooth
+ */
+function throttleRAF(func) {
+    let ticking = false;
+    return function(...args) {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                func.apply(this, args);
+                ticking = false;
+            });
+            ticking = true;
+        }
+    };
+}
 
-    <!-- SVG Icons Sprite -->
-    <svg style="display: none;">
-        <defs>
-            <symbol id="icon-map" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-            </symbol>
-            <symbol id="icon-phone" viewBox="0 0 24 24">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-            </symbol>
-            <symbol id="icon-email" viewBox="0 0 24 24">
-                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-            </symbol>
-            <symbol id="icon-clock" viewBox="0 0 24 24">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-            </symbol>
-            <symbol id="icon-social" viewBox="0 0 24 24">
-                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
-            </symbol>
-            <symbol id="icon-facebook" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </symbol>
-            <symbol id="icon-instagram" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
-            </symbol>
-        </defs>
-    </svg>
-
-    <!-- JavaScript -->
-    <script src="script.js" defer></script>
-</body>
-</html>
+/**
+ * Service Worker per cache offline (opzionale)
+ */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {
+            // Service worker non supportato o errore
+        });
+    });
+}
