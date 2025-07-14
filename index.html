@@ -1,240 +1,56 @@
-/**
- * Pro Loco Fosciandora - JavaScript principale
- * Gestisce interattività, lazy loading, e ottimizzazioni performance
- */
+// Pro Loco Fosciandora - JavaScript
 
-// Configurazione globale
-const CONFIG = {
-    slideInterval: 5000, // Intervallo slideshow in ms
-    scrollOffset: 100,   // Offset per smooth scroll
-    lazyLoadOffset: 50   // Offset per lazy loading
-};
-
-// Stato dell'applicazione
-const state = {
-    currentSlide: 0,
-    isMenuOpen: false,
-    hasAcceptedCookies: localStorage.getItem('cookiesAccepted') === 'true'
-};
-
-/**
- * Inizializzazione al caricamento del DOM
- */
+// Mobile menu toggle
 document.addEventListener('DOMContentLoaded', function() {
-    initNavbar();
-    initHeroSlideshow();
-    initLazyLoading();
-    initSmoothScroll();
-    initContactForm();
-    initCookieBanner();
-    initMobileMenu();
-});
-
-/**
- * Gestione Navbar - Effetto scroll e active state
- */
-function initNavbar() {
-    const navbar = document.getElementById('navbar');
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navToggle = document.getElementById('navToggle');
+    const navMenu = document.getElementById('navMenu');
     
-    // Effetto navbar su scroll
-    window.addEventListener('scroll', () => {
+    navToggle.addEventListener('click', function() {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+    
+    // Close menu when clicking on a link
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            navToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+    
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', function() {
         if (window.scrollY > 100) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
-        
-        // Update active nav link
-        updateActiveNavLink();
     });
     
-    // Evidenzia link attivo in base alla sezione visibile
-    function updateActiveNavLink() {
-        const sections = document.querySelectorAll('section[id]');
-        const scrollY = window.pageYOffset;
-        
-        sections.forEach(section => {
-            const sectionHeight = section.offsetHeight;
-            const sectionTop = section.offsetTop - CONFIG.scrollOffset;
-            const sectionId = section.getAttribute('id');
-            
-            if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${sectionId}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        });
-    }
-}
-
-/**
- * Hero Slideshow automatico
- */
-function initHeroSlideshow() {
-    const slides = document.querySelectorAll('.hero-slide');
-    if (slides.length <= 1) return;
+    // Animate on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
     
-    setInterval(() => {
-        slides[state.currentSlide].classList.remove('active');
-        state.currentSlide = (state.currentSlide + 1) % slides.length;
-        slides[state.currentSlide].classList.add('active');
-    }, CONFIG.slideInterval);
-}
-
-/**
- * Lazy Loading per immagini e iframe
- */
-function initLazyLoading() {
-    const lazyImages = document.querySelectorAll('img[data-src]');
-    const lazyIframes = document.querySelectorAll('iframe[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
+    const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy-img');
-                img.removeAttribute('data-src');
-                observer.unobserve(img);
+                entry.target.classList.add('visible');
             }
         });
-    }, {
-        rootMargin: `${CONFIG.lazyLoadOffset}px`
+    }, observerOptions);
+    
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    animatedElements.forEach(el => {
+        observer.observe(el);
     });
-    
-    // Osserva tutte le immagini lazy
-    lazyImages.forEach(img => imageObserver.observe(img));
-    
-    // Lazy load per iframe (mappa)
-    lazyIframes.forEach(iframe => {
-        imageObserver.observe(iframe);
-    });
-}
+});
 
-/**
- * Smooth Scroll per link interni
- */
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetSection = document.querySelector(targetId);
-            if (targetSection) {
-                const offsetTop = targetSection.offsetTop - CONFIG.scrollOffset;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
-                
-                // Chiudi menu mobile se aperto
-                if (state.isMenuOpen) {
-                    toggleMobileMenu();
-                }
-            }
-        });
-    });
-}
-
-/**
- * Menu Mobile Toggle
- */
-function initMobileMenu() {
-    const navToggle = document.getElementById('navToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    navToggle.addEventListener('click', toggleMobileMenu);
-    
-    // Chiudi menu quando si clicca fuori
-    document.addEventListener('click', (e) => {
-        if (state.isMenuOpen && !navToggle.contains(e.target) && !navMenu.contains(e.target)) {
-            toggleMobileMenu();
-        }
-    });
-}
-
-function toggleMobileMenu() {
-    const navToggle = document.getElementById('navToggle');
-    const navMenu = document.getElementById('navMenu');
-    
-    state.isMenuOpen = !state.isMenuOpen;
-    navToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-}
-
-/**
- * Form di contatto con validazione
- */
-function initContactForm() {
-    const form = document.getElementById('contactForm');
-    if (!form) return;
-    
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        // Validazione base
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        
-        if (!validateEmail(data.email)) {
-            showNotification('Inserisci un indirizzo email valido', 'error');
-            return;
-        }
-        
-        // Simula invio (sostituire con vera API)
-        try {
-            // Mostra loading
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="loading"></span> Invio in corso...';
-            submitBtn.disabled = true;
-            
-            // Simula delay network
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Successo
-            showNotification('Messaggio inviato con successo! Ti risponderemo presto.', 'success');
-            form.reset();
-            
-            // Ripristina bottone
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            
-        } catch (error) {
-            showNotification('Si è verificato un errore. Riprova più tardi.', 'error');
-        }
-    });
-}
-
-/**
- * Cookie Banner
- */
-function initCookieBanner() {
-    const banner = document.getElementById('cookieBanner');
-    if (!banner) return;
-    
-    if (!state.hasAcceptedCookies) {
-        setTimeout(() => {
-            banner.classList.add('show');
-        }, 2000);
-    }
-}
-
-function acceptCookies() {
-    localStorage.setItem('cookiesAccepted', 'true');
-    document.getElementById('cookieBanner').classList.remove('show');
-}
-
-/**
- * Apertura Google Maps con indicazioni
- */
-function openGoogleMaps(from) {
+// Open Google Maps
+function openMaps(from) {
     const destination = 'Fosciandora, LU, Italia';
     let origin = '';
     
@@ -248,107 +64,31 @@ function openGoogleMaps(from) {
         case 'firenze':
             origin = 'Firenze, FI, Italia';
             break;
-        default:
-            origin = '';
     }
     
     const url = `https://www.google.com/maps/dir/${encodeURIComponent(origin)}/${encodeURIComponent(destination)}`;
     window.open(url, '_blank');
 }
 
-/**
- * Richiesta tesseramento
- */
-function contattiTesseramento() {
+// Request info
+function richiestaInfo() {
     const subject = encodeURIComponent('Richiesta Tesseramento Pro Loco');
     const body = encodeURIComponent('Salve, vorrei ricevere informazioni sul tesseramento alla Pro Loco Fosciandora.\n\nNome:\nCognome:\nTelefono:\n\nGrazie');
     window.location.href = `mailto:info@prolocofosciandora.it?subject=${subject}&body=${body}`;
 }
 
-/**
- * Utilities
- */
-function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-}
-
-function showNotification(message, type = 'info') {
-    // Crea elemento notifica
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-    
-    // Stili inline per la notifica
-    Object.assign(notification.style, {
-        position: 'fixed',
-        top: '20px',
-        right: '20px',
-        padding: '1rem 2rem',
-        backgroundColor: type === 'success' ? '#4caf50' : '#f44336',
-        color: 'white',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-        zIndex: '3000',
-        opacity: '0',
-        transform: 'translateY(-20px)',
-        transition: 'all 0.3s ease'
-    });
-    
-    document.body.appendChild(notification);
-    
-    // Animazione entrata
-    setTimeout(() => {
-        notification.style.opacity = '1';
-        notification.style.transform = 'translateY(0)';
-    }, 10);
-    
-    // Rimozione automatica
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        notification.style.transform = 'translateY(-20px)';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-/**
- * Performance: Debounce per eventi scroll/resize
- */
-function debounce(func, wait = 100) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-/**
- * Ottimizzazione: Request Animation Frame per animazioni smooth
- */
-function throttleRAF(func) {
-    let ticking = false;
-    return function(...args) {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                func.apply(this, args);
-                ticking = false;
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            const offset = 80;
+            const targetPosition = target.offsetTop - offset;
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
             });
-            ticking = true;
         }
-    };
-}
-
-/**
- * Service Worker per cache offline (opzionale)
- */
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {
-            // Service worker non supportato o errore
-        });
     });
-}
+});
