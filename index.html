@@ -1,812 +1,433 @@
-/* Pro Loco Fosciandora - Modern Boxed Design */
-
-:root {
-    --primary-color: #57302f;
-    --primary-dark: #3d1f1e;
-    --primary-light: #6f3f3e;
-    --secondary-color: #d4a574;
-    --accent-color: #8fbc8f;
-    --text-color: #333333;
-    --text-light: #666666;
-    --bg-color: #ffffff;
-    --bg-light: #f8f6f4;
-    --border-color: #e8e5e2;
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
-    --shadow-sm: 0 2px 8px rgba(87, 48, 47, 0.08);
-    --shadow-md: 0 4px 16px rgba(87, 48, 47, 0.12);
-    --shadow-lg: 0 8px 32px rgba(87, 48, 47, 0.16);
+    <!-- SEO Meta Tags -->
+    <title>Pro Loco Fosciandora - Trekking, Natura e Tradizioni in Garfagnana</title>
+    <meta name="description" content="Scopri Fosciandora e le sue frazioni nella Garfagnana. Percorsi trekking, mountain bike, natura incontaminata tra le Alpi Apuane. Eventi, tradizioni e sapori locali.">
+    <meta name="keywords" content="Fosciandora, Garfagnana, trekking, mountain bike, natura, Alpi Apuane, Pro Loco, sentieri, escursioni, turismo">
+    <meta name="author" content="Pro Loco Fosciandora">
+    <meta name="robots" content="index, follow">
     
-    --radius: 16px;
-    --radius-lg: 24px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--bg-light);
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-h1 { font-size: clamp(2rem, 5vw, 3rem); }
-h2 { font-size: clamp(1.5rem, 4vw, 2.25rem); }
-h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
-
-a {
-    color: var(--primary-color);
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-/* Layout */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.section {
-    padding: 80px 0;
-}
-
-.section-alt {
-    background-color: var(--bg-color);
-}
-
-.section-featured {
-    background: linear-gradient(135deg, #faf9f7 0%, #f5f2ef 100%);
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-.section-title {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-.section-subtitle {
-    font-size: 1.125rem;
-    color: var(--text-light);
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-/* Navbar */
-.navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-sm);
-    z-index: 1000;
-    transition: var(--transition);
-}
-
-.navbar.scrolled {
-    box-shadow: var(--shadow-md);
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 1rem 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-logo {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.nav-logo a {
-    color: var(--primary-color);
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-}
-
-.nav-link {
-    color: var(--text-color);
-    font-weight: 500;
-    position: relative;
-    padding: 0.5rem 0;
-}
-
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--primary-color);
-    transition: width 0.3s ease;
-}
-
-.nav-link:hover::after,
-.nav-link.active::after {
-    width: 100%;
-}
-
-.nav-toggle {
-    display: none;
-    flex-direction: column;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-}
-
-.nav-toggle span {
-    width: 25px;
-    height: 3px;
-    background: var(--primary-color);
-    margin: 3px 0;
-    transition: var(--transition);
-    border-radius: 2px;
-}
-
-/* Hero Section */
-.hero {
-    padding-top: 120px;
-    padding-bottom: 80px;
-    background: var(--bg-light);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-}
-
-.hero-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-}
-
-.hero-content {
-    text-align: left;
-}
-
-.hero-title {
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-}
-
-.hero-subtitle {
-    font-size: 1.25rem;
-    color: var(--text-light);
-    margin-bottom: 2rem;
-}
-
-.hero-image-box {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-}
-
-.hero-image {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-/* Buttons */
-.btn {
-    display: inline-block;
-    padding: 14px 32px;
-    border-radius: var(--radius);
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    text-align: center;
-    cursor: pointer;
-    transition: var(--transition);
-    border: none;
-}
-
-.btn-primary {
-    background: var(--primary-color);
-    color: white;
-}
-
-.btn-primary:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.btn-secondary {
-    background: white;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-}
-
-.btn-outline {
-    background: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-    padding: 10px 24px;
-}
-
-.btn-block {
-    width: 100%;
-}
-
-/* Cards */
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.card {
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: 2.5rem;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
-    text-align: center;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.card-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 1.5rem;
-    background: var(--bg-light);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-color);
-}
-
-/* Feature Cards */
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
-}
-
-.feature-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    transition: var(--transition);
-}
-
-.feature-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
-}
-
-.feature-image-wrapper {
-    position: relative;
-    height: 240px;
-    overflow: hidden;
-}
-
-.feature-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.feature-card:hover .feature-image {
-    transform: scale(1.1);
-}
-
-.feature-overlay {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-}
-
-.feature-tag {
-    background: var(--primary-color);
-    color: white;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.feature-content {
-    padding: 2rem;
-}
-
-.feature-content h3 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-/* Frazioni Grid */
-.frazioni-grid {
-    display: grid;
-    gap: 2rem;
-}
-
-.frazione-box {
-    background: white;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    transition: var(--transition);
-}
-
-.frazione-box:hover {
-    transform: translateX(8px);
-    box-shadow: var(--shadow-lg);
-}
-
-.frazione-images {
-    position: relative;
-    display: grid;
-    grid-template-rows: 3fr 1fr;
-    height: 250px;
-}
-
-.frazione-main-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.frazione-thumb {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.8;
-}
-
-.frazione-info {
-    padding: 2rem;
-}
-
-.frazione-info h3 {
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-}
-
-.altitude {
-    font-size: 0.875rem;
-    color: var(--text-light);
-    font-weight: normal;
-}
-
-.frazione-tags {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.tag {
-    background: var(--bg-light);
-    color: var(--primary-color);
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.875rem;
-}
-
-/* Routes */
-.routes-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-}
-
-.route-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    text-align: center;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
-}
-
-.route-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.route-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 1rem;
-    background: var(--bg-light);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-color);
-}
-
-.route-info {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 1rem 0;
-}
-
-.route-distance,
-.route-time {
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-/* Contact */
-.section-contact {
-    background: var(--primary-color);
-    color: white;
-}
-
-.section-contact .section-title {
-    color: white;
-}
-
-.section-contact .section-subtitle {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.contact-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 3rem;
-}
-
-.contact-info-box {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem;
-}
-
-.contact-item {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.contact-icon {
-    width: 48px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.contact-item h4 {
-    margin-bottom: 0.25rem;
-    font-size: 0.875rem;
-    opacity: 0.8;
-}
-
-.contact-item a {
-    color: white;
-    font-weight: 500;
-}
-
-.membership-box {
-    background: white;
-    color: var(--text-color);
-    border-radius: var(--radius-lg);
-    padding: 2.5rem;
-}
-
-.membership-box h3 {
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-.benefits-list {
-    list-style: none;
-    margin: 1.5rem 0;
-}
-
-.benefits-list li {
-    padding: 0.5rem 0;
-    padding-left: 1.5rem;
-    position: relative;
-}
-
-.benefits-list li::before {
-    content: '✓';
-    position: absolute;
-    left: 0;
-    color: var(--accent-color);
-    font-weight: bold;
-}
-
-/* Social Links */
-.social-box {
-    margin-top: 2rem;
-}
-
-.social-links {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.social-link {
-    width: 48px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-}
-
-.social-link:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-3px);
-}
-
-/* Footer */
-.footer {
-    background: var(--primary-dark);
-    color: white;
-    padding: 3rem 0;
-    text-align: center;
-}
-
-.footer-content p {
-    margin: 0.5rem 0;
-}
-
-.footer a {
-    color: var(--secondary-color);
-}
-
-.heart {
-    color: #e74c3c;
-}
-
-/* Animations */
-.animate-fade-up {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 0.8s ease forwards;
-}
-
-.animate-fade-up-delay {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 0.8s ease 0.2s forwards;
-}
-
-.animate-fade-up-delay-2 {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 0.8s ease 0.4s forwards;
-}
-
-.animate-scale {
-    opacity: 0;
-    transform: scale(0.9);
-    animation: scaleIn 0.8s ease 0.3s forwards;
-}
-
-.animate-on-scroll {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease;
-}
-
-.animate-on-scroll.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-@keyframes fadeUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes scaleIn {
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* Scroll Indicator */
-.scroll-indicator {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    color: var(--primary-color);
-}
-
-.scroll-arrow {
-    fill: currentColor;
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-5px);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .nav-menu {
-        position: fixed;
-        left: -100%;
-        top: 70px;
-        flex-direction: column;
-        background: white;
-        width: 100%;
-        text-align: center;
-        transition: 0.3s;
-        box-shadow: var(--shadow-md);
-        padding: 2rem 0;
-    }
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pro Loco Fosciandora - Trekking e Natura in Garfagnana">
+    <meta property="og:description" content="Scopri i sentieri, la natura e le tradizioni di Fosciandora. Percorsi trekking e MTB tra le Alpi Apuane.">
+    <meta property="og:image" content="images/proloco-fosciandora-panorama-treppignana.jpg">
     
-    .nav-menu.active {
-        left: 0;
-    }
+    <!-- Font Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     
-    .nav-toggle {
-        display: flex;
-    }
-    
-    .nav-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(6px, 6px);
-    }
-    
-    .nav-toggle.active span:nth-child(2) {
-        opacity: 0;
-    }
-    
-    .nav-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(6px, -6px);
-    }
-    
-    .hero-container {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-    
-    .hero-content {
-        text-align: center;
-    }
-    
-    .frazione-box {
-        grid-template-columns: 1fr;
-    }
-    
-    .frazione-images {
-        grid-template-columns: 2fr 1fr;
-        grid-template-rows: 1fr;
-        height: 200px;
-    }
-    
-    .contact-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .section {
-        padding: 60px 0;
-    }
-}
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="#home">Pro Loco Fosciandora</a>
+            </div>
+            
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#chi-siamo" class="nav-link">Chi Siamo</a></li>
+                <li><a href="#scopri" class="nav-link">Il Territorio</a></li>
+                <li><a href="#natura-trekking" class="nav-link">Natura & Trekking</a></li>
+                <li><a href="#come-arrivare" class="nav-link">Come Arrivare</a></li>
+                <li><a href="#contatti" class="nav-link">Contatti</a></li>
+            </ul>
+        </div>
+    </nav>
 
-/* Utility Classes */
-.link-arrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--primary-color);
-    font-weight: 500;
-    transition: gap 0.3s ease;
-}
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title animate-fade-up">Benvenuti a Fosciandora</h1>
+                <p class="hero-subtitle animate-fade-up-delay">Storia, natura e sapori autentici nel cuore verde della Garfagnana</p>
+                <a href="#scopri" class="btn btn-primary animate-fade-up-delay-2">Scopri il territorio</a>
+            </div>
+            
+            <div class="hero-image-box animate-scale">
+                <img src="images/proloco-fosciandora-panorama-treppignana.jpg" 
+                     alt="Panorama di Fosciandora" 
+                     class="hero-image">
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <span>Scorri per esplorare</span>
+            <svg class="scroll-arrow" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+            </svg>
+        </div>
+    </section>
 
-.link-arrow:hover {
-    gap: 0.75rem;
-}
+    <!-- Chi Siamo Section -->
+    <section class="section" id="chi-siamo">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Chi Siamo</h2>
+                <p class="section-subtitle">La Pro Loco Fosciandora, fondata nell'ottobre 2020, è il cuore pulsante della promozione turistica del nostro territorio montano.</p>
+            </div>
+            
+            <div class="cards-grid">
+                <div class="card animate-on-scroll">
+                    <div class="card-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                    <h3>La Nostra Missione</h3>
+                    <p>Valorizziamo le bellezze naturali, storiche e culturali di Fosciandora e delle sue sette frazioni. Preserviamo le tradizioni locali accogliendo visitatori da ogni dove, mostrando i tesori nascosti della Garfagnana.</p>
+                </div>
+                
+                <div class="card animate-on-scroll">
+                    <div class="card-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <h3>I Nostri Valori</h3>
+                    <p>Turismo sostenibile, rispetto dell'ambiente montano, valorizzazione delle peculiarità di ogni borgo. Collaboriamo con istituzioni locali e associazioni per creare una rete di accoglienza autentica.</p>
+                </div>
+                
+                <div class="card animate-on-scroll">
+                    <div class="card-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        </svg>
+                    </div>
+                    <h3>Il Nostro Team</h3>
+                    <div class="team-compact">
+                        <p><strong>Raffaella Biagioni</strong> - Vice Presidente</p>
+                        <p><strong>Giulia Toni</strong> - Segretaria</p>
+                        <p><strong>Stefania Lunardi</strong> - Tesoriere</p>
+                        <p>E altri consiglieri dedicati</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-.difficulty-badges {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
+    <!-- Natura e Trekking Section -->
+    <section class="section section-featured" id="natura-trekking">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Natura, Trekking e Mountain Bike</h2>
+                <p class="section-subtitle">Oltre 100 km di sentieri attraverso boschi secolari, alpeggi e crinali panoramici</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-image-wrapper">
+                        <img src="images/proloco-fosciandora-strada-monti-autunno.jpg" 
+                             alt="Sentiero montano in autunno" 
+                             class="feature-image">
+                        <div class="feature-overlay">
+                            <span class="feature-tag">Trekking</span>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Sentieri e Escursioni</h3>
+                        <p>Dal semplice passeggio nei borghi alle escursioni verso le Alpi Apuane. Il celebre <strong>Sentiero 00</strong> parte da Lupinaia attraverso faggete centenarie.</p>
+                        <a href="https://www.sentieridelletreterre.it/" target="_blank" class="link-arrow">
+                            Scopri i percorsi
+                            <svg width="16" height="16" viewBox="0 0 24 24">
+                                <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-image-wrapper">
+                        <img src="images/proloco-fosciandora-lupinaia-campi-lavacchio.jpg" 
+                             alt="Mountain bike nei prati" 
+                             class="feature-image">
+                        <div class="feature-overlay">
+                            <span class="feature-tag">MTB</span>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Mountain Bike</h3>
+                        <p>Dalle tranquille sterrate ai single track tecnici. La zona di <strong>La Villa</strong> offre trail naturali tra castagneti e radure panoramiche.</p>
+                        <span class="difficulty-badges">
+                            <span class="badge badge-easy">Facile</span>
+                            <span class="badge badge-medium">Medio</span>
+                            <span class="badge badge-hard">Difficile</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-image-wrapper">
+                        <img src="images/proloco-fosciandora-ceserana-autunno.jpg" 
+                             alt="Foliage autunnale" 
+                             class="feature-image">
+                        <div class="feature-overlay">
+                            <span class="feature-tag">Flora & Fauna</span>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Biodiversità</h3>
+                        <p>Boschi di castagni, faggi e querce ospitano caprioli, cinghiali e rapaci. In primavera fioriscono orchidee selvatiche e fiori montani.</p>
+                        <div class="seasons-icons">
+                            <span title="Primavera">🌸</span>
+                            <span title="Estate">☀️</span>
+                            <span title="Autunno">🍂</span>
+                            <span title="Inverno">❄️</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-.badge {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
+    <!-- Scopri il Territorio Section -->
+    <section class="section" id="scopri">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Le Sette Frazioni</h2>
+                <p class="section-subtitle">Ogni borgo racconta una storia unica tra arte, natura e tradizioni</p>
+            </div>
+            
+            <div class="frazioni-grid">
+                <!-- Fosciandora -->
+                <div class="frazione-box animate-on-scroll">
+                    <div class="frazione-images">
+                        <img src="images/proloco-fosciandora-fosciandora.jpg" 
+                             alt="Fosciandora capoluogo" 
+                             class="frazione-main-img">
+                        <img src="images/proloco-fosciandora-arco-villa-raffaelli.jpg" 
+                             alt="Villa Raffaelli" 
+                             class="frazione-thumb">
+                    </div>
+                    <div class="frazione-info">
+                        <h3>Fosciandora <span class="altitude">550m</span></h3>
+                        <p>Il capoluogo domina la valle con viste spettacolari sulle Alpi Apuane. Da vedere: Chiesa di San Sebastiano, Sant'Agostino e Villa Raffaelli.</p>
+                        <div class="frazione-tags">
+                            <span class="tag">Vista panoramica</span>
+                            <span class="tag">Arte sacra</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ceserana -->
+                <div class="frazione-box animate-on-scroll">
+                    <div class="frazione-images">
+                        <img src="images/proloco-fosciandora-ceserana.jpg" 
+                             alt="Ceserana" 
+                             class="frazione-main-img">
+                        <img src="images/proloco-fosciandora-ceserana-inverno.jpg" 
+                             alt="Ceserana d'inverno" 
+                             class="frazione-thumb">
+                    </div>
+                    <div class="frazione-info">
+                        <h3>Ceserana <span class="altitude">620m</span></h3>
+                        <p>Antico borgo fortificato con il Castello Estense e la Chiesa romanica di San Andrea (XI secolo). Il Museo nella Rocca racconta la storia locale.</p>
+                        <div class="frazione-tags">
+                            <span class="tag">Castello</span>
+                            <span class="tag">Museo</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- La Villa -->
+                <div class="frazione-box animate-on-scroll">
+                    <div class="frazione-images">
+                        <img src="images/proloco-fosciandora-lavilla.jpg" 
+                             alt="La Villa" 
+                             class="frazione-main-img">
+                        <img src="images/proloco-fosciandora-lavilla-ceserana-da-lontano.jpg" 
+                             alt="Vista panoramica" 
+                             class="frazione-thumb">
+                    </div>
+                    <div class="frazione-info">
+                        <h3>La Villa <span class="altitude">480m</span></h3>
+                        <p>Immersa nei castagneti, punto di partenza per l'alpeggio di Prade Garfagnine. Ideale per famiglie e MTB.</p>
+                        <div class="frazione-tags">
+                            <span class="tag">MTB</span>
+                            <span class="tag">Castagneti</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Continua con le altre frazioni... -->
+            </div>
+            
+            <div class="cta-box">
+                <p>Vuoi esplorare tutti i borghi?</p>
+                <a href="#contatti" class="btn btn-secondary">Richiedi informazioni</a>
+            </div>
+        </div>
+    </section>
 
-.badge-easy {
-    background: #e8f5e9;
-    color: #2e7d32;
-}
+    <!-- Come Arrivare Section -->
+    <section class="section section-alt" id="come-arrivare">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Come Arrivare</h2>
+                <p class="section-subtitle">Fosciandora è facilmente raggiungibile dalle principali città toscane</p>
+            </div>
+            
+            <div class="routes-container">
+                <div class="route-card animate-on-scroll">
+                    <div class="route-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <h3>Da Lucca</h3>
+                    <div class="route-info">
+                        <span class="route-distance">45 km</span>
+                        <span class="route-time">50 min</span>
+                    </div>
+                    <p>SR445 direzione Castelnuovo, svolta a destra 4 km prima</p>
+                    <button class="btn btn-outline" onclick="openMaps('lucca')">
+                        Indicazioni
+                    </button>
+                </div>
+                
+                <div class="route-card animate-on-scroll">
+                    <div class="route-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <h3>Da Pisa</h3>
+                    <div class="route-info">
+                        <span class="route-distance">70 km</span>
+                        <span class="route-time">1h 20min</span>
+                    </div>
+                    <p>SS12 verso Lucca, poi SR445 per la Garfagnana</p>
+                    <button class="btn btn-outline" onclick="openMaps('pisa')">
+                        Indicazioni
+                    </button>
+                </div>
+                
+                <div class="route-card animate-on-scroll">
+                    <div class="route-icon">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <h3>Da Firenze</h3>
+                    <div class="route-info">
+                        <span class="route-distance">115 km</span>
+                        <span class="route-time">1h 45min</span>
+                    </div>
+                    <p>A11 uscita Lucca Est, poi SR445 per la Garfagnana</p>
+                    <button class="btn btn-outline" onclick="openMaps('firenze')">
+                        Indicazioni
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-.badge-medium {
-    background: #fff3e0;
-    color: #e65100;
-}
+    <!-- Contatti Section -->
+    <section class="section section-contact" id="contatti">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Contatti</h2>
+                <p class="section-subtitle">Siamo qui per aiutarti a scoprire il meglio di Fosciandora</p>
+            </div>
+            
+            <div class="contact-grid">
+                <div class="contact-info-box animate-on-scroll">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>Telefono</h4>
+                            <a href="tel:+393347236729">+39 334 723 6729</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>Sede</h4>
+                            <p>Piazza degli Emigranti 1<br>
+                            55022 Fosciandora (LU)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>Email</h4>
+                            <a href="mailto:info@prolocofosciandora.it">info@prolocofosciandora.it</a>
+                        </div>
+                    </div>
+                    
+                    <div class="social-box">
+                        <h4>Seguici sui social</h4>
+                        <div class="social-links">
+                            <a href="https://facebook.com/prolocofosciandora" target="_blank" class="social-link">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                            </a>
+                            <a href="https://instagram.com/prolocofosciandora" target="_blank" class="social-link">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="membership-box animate-on-scroll">
+                    <h3>Diventa Socio</h3>
+                    <p>Sostieni le nostre attività e ottieni vantaggi esclusivi</p>
+                    <ul class="benefits-list">
+                        <li>Tessera annuale a soli <strong>5€</strong></li>
+                        <li>Sconti presso strutture convenzionate</li>
+                        <li>Accesso prioritario agli eventi</li>
+                        <li>Newsletter con itinerari esclusivi</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block" onclick="richiestaInfo()">
+                        Richiedi la tessera
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-.badge-hard {
-    background: #ffebee;
-    color: #c62828;
-}
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 Pro Loco Fosciandora - Tutti i diritti riservati</p>
+                <p>Realizzato con <span class="heart">❤</span> da <a href="https://www.garfagnanadream.it" target="_blank">Garfagnanadream.it</a></p>
+            </div>
+        </div>
+    </footer>
 
-.seasons-icons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    font-size: 1.5rem;
-}
-
-.cta-box {
-    text-align: center;
-    margin-top: 3rem;
-    padding: 2rem;
-    background: var(--bg-light);
-    border-radius: var(--radius-lg);
-}
-
-.cta-box p {
-    margin-bottom: 1rem;
-    font-size: 1.125rem;
-}
-
-.team-compact p {
-    margin: 0.25rem 0;
-}
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
