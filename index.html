@@ -212,7 +212,7 @@
         }
 
         /* ============================================
-           HERO SECTION
+           HERO SECTION CON IMMAGINI RANDOMICHE
            ============================================ */
         .hero {
             padding-top: 120px;
@@ -253,12 +253,33 @@
             overflow: hidden;
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
+            height: 500px;
+            perspective: 1000px;
         }
 
         .hero-image {
+            position: absolute;
             width: 100%;
-            height: auto;
-            display: block;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+
+        .hero-image.active {
+            transform: translateX(0) rotateY(0deg);
+            opacity: 1;
+        }
+
+        .hero-image.exit {
+            transform: translateX(-100%) rotateY(-30deg);
+            opacity: 0;
+        }
+
+        .hero-image.enter {
+            transform: translateX(100%) rotateY(30deg);
+            opacity: 0;
         }
 
         /* ============================================
@@ -406,7 +427,7 @@
         }
 
         /* ============================================
-           FRAZIONI GRID
+           FRAZIONI GRID CON SLIDER
            ============================================ */
         .frazioni-grid {
             display: grid;
@@ -419,7 +440,7 @@
             overflow: hidden;
             box-shadow: var(--shadow-md);
             display: grid;
-            grid-template-columns: 300px 1fr;
+            grid-template-columns: 350px 1fr;
             transition: var(--transition);
         }
 
@@ -428,27 +449,60 @@
             box-shadow: var(--shadow-lg);
         }
 
-        .frazione-images {
+        .frazione-slider {
             position: relative;
-            display: grid;
-            grid-template-rows: 1fr 1fr;
-            height: 300px;
+            height: 350px;
             overflow: hidden;
         }
 
-        .frazione-main-img {
+        .frazione-slide {
+            position: absolute;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            object-position: center;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translateX(100%);
         }
 
-        .frazione-thumb {
+        .frazione-slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .frazione-slide.exit {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+
+        .frazione-slide img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
-            opacity: 0.9;
+        }
+
+        .slider-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 4px;
         }
 
         .frazione-info {
@@ -507,7 +561,7 @@
         .map-overlay {
             position: absolute;
             top: 20px;
-            left: 20px;
+            right: 20px;
             background: white;
             padding: 1.5rem;
             border-radius: var(--radius);
@@ -846,15 +900,17 @@
             .hero-content {
                 text-align: center;
             }
+
+            .hero-image-box {
+                height: 400px;
+            }
             
             .frazione-box {
                 grid-template-columns: 1fr;
             }
-            
-            .frazione-images {
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: 1fr;
-                height: 200px;
+
+            .frazione-slider {
+                height: 250px;
             }
             
             .contact-grid {
@@ -983,10 +1039,8 @@
                 <a href="#scopri" class="btn btn-primary animate-fade-up-delay-2">Scopri il territorio</a>
             </div>
             
-            <div class="hero-image-box animate-scale">
-                <img src="images/proloco-fosciandora-panorama-treppignana.jpg" 
-                     alt="Panorama di Fosciandora" 
-                     class="hero-image">
+            <div class="hero-image-box animate-scale" id="heroImageBox">
+                <!-- Le immagini vengono caricate dinamicamente -->
             </div>
         </div>
         
@@ -1143,13 +1197,17 @@
             <div class="frazioni-grid">
                 <!-- FOSCIANDORA CAPOLUOGO -->
                 <div class="frazione-box animate-on-scroll">
-                    <div class="frazione-images">
-                        <img src="images/proloco-fosciandora-fosciandora.jpg" 
-                             alt="Fosciandora capoluogo vista panoramica" 
-                             class="frazione-main-img">
-                        <img src="images/proloco-fosciandora-arco-villa-raffaelli.jpg" 
-                             alt="Arco storico di Villa Raffaelli a Fosciandora" 
-                             class="frazione-thumb">
+                    <div class="frazione-slider" data-slider="0">
+                        <div class="frazione-slide active">
+                            <img src="images/proloco-fosciandora-fosciandora.jpg" alt="Fosciandora capoluogo vista panoramica">
+                        </div>
+                        <div class="frazione-slide">
+                            <img src="images/proloco-fosciandora-arco-villa-raffaelli.jpg" alt="Arco storico di Villa Raffaelli a Fosciandora">
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="changeSlide(0, 0)"></span>
+                            <span class="dot" onclick="changeSlide(0, 1)"></span>
+                        </div>
                     </div>
                     <div class="frazione-info">
                         <h3>Fosciandora <span class="altitude">550m s.l.m.</span></h3>
@@ -1165,21 +1223,24 @@
                 
                 <!-- CESERANA -->
                 <div class="frazione-box animate-on-scroll">
-                    <div class="frazione-images">
-                        <img src="images/proloco-fosciandora-ceserana.jpg" 
-                             alt="Ceserana borgo medievale" 
-                             class="frazione-main-img">
-                        <img src="images/proloco-fosciandora-ceserana-inverno.jpg" 
-                             alt="Ceserana sotto la neve in inverno" 
-                             class="frazione-thumb">
+                    <div class="frazione-slider" data-slider="1">
+                        <div class="frazione-slide active">
+                            <img src="images/proloco-fosciandora-ceserana.jpg" alt="Ceserana borgo medievale">
+                        </div>
+                        <div class="frazione-slide">
+                            <img src="images/proloco-fosciandora-ceserana-inverno.jpg" alt="Ceserana sotto la neve in inverno">
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="changeSlide(1, 0)"></span>
+                            <span class="dot" onclick="changeSlide(1, 1)"></span>
+                        </div>
                     </div>
                     <div class="frazione-info">
                         <h3>Ceserana <span class="altitude">620m s.l.m.</span></h3>
-                        <p>Antico borgo fortificato alla sinistra del Serchio, Ceserana conserva il castello del XV secolo, ampliato dagli Estensi con mura possenti per l'uso delle armi da fuoco. La splendida chiesa romanica di San Andrea (XI secolo), con capitelli che richiamano simbolismi templari, domina la valle dall'interno della Rocca. Nel 1333 qui potrebbe essere stata trattata la pace tra il Re di Boemia e Roberto d'Angiò. Il Museo nella Rocca Estense racconta secoli di storia garfagnina con reperti e documenti unici.</p>
+                        <p>Antico borgo fortificato alla sinistra del Serchio, Ceserana conserva il castello del XV secolo, ampliato dagli Estensi con mura possenti per l'uso delle armi da fuoco. La splendida chiesa romanica di San Andrea (XI secolo), con capitelli che richiamano simbolismi templari, domina la valle dall'interno della Rocca. Nel 1333 qui potrebbe essere stata trattata la pace tra il Re di Boemia e Roberto d'Angiò.</p>
                         <div class="frazione-tags">
                             <span class="tag">Castello Estense</span>
                             <span class="tag">Chiesa romanica</span>
-                            <span class="tag">Museo</span>
                             <span class="tag">Storia medievale</span>
                         </div>
                     </div>
@@ -1187,13 +1248,17 @@
                 
                 <!-- LA VILLA -->
                 <div class="frazione-box animate-on-scroll">
-                    <div class="frazione-images">
-                        <img src="images/proloco-fosciandora-lavilla.jpg" 
-                             alt="La Villa borgo montano" 
-                             class="frazione-main-img">
-                        <img src="images/proloco-fosciandora-lavilla-ceserana-da-lontano.jpg" 
-                             alt="Vista panoramica La Villa e Ceserana" 
-                             class="frazione-thumb">
+                    <div class="frazione-slider" data-slider="2">
+                        <div class="frazione-slide active">
+                            <img src="images/proloco-fosciandora-lavilla.jpg" alt="La Villa borgo montano">
+                        </div>
+                        <div class="frazione-slide">
+                            <img src="images/proloco-fosciandora-lavilla-ceserana-da-lontano.jpg" alt="Vista panoramica La Villa e Ceserana">
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="changeSlide(2, 0)"></span>
+                            <span class="dot" onclick="changeSlide(2, 1)"></span>
+                        </div>
                     </div>
                     <div class="frazione-info">
                         <h3>La Villa <span class="altitude">480m s.l.m.</span></h3>
@@ -1209,13 +1274,17 @@
                 
                 <!-- LUPINAIA -->
                 <div class="frazione-box animate-on-scroll">
-                    <div class="frazione-images">
-                        <img src="images/proloco-fosciandora-lupinaia.jpg" 
-                             alt="Lupinaia borgo antico" 
-                             class="frazione-main-img">
-                        <img src="images/lupinaia-2-fosciandora-pro-loco-garfagnanadream-leonardo-fiori.jpg" 
-                             alt="Lupinaia vista artistica di Leonardo Fiori" 
-                             class="frazione-thumb">
+                    <div class="frazione-slider" data-slider="3">
+                        <div class="frazione-slide active">
+                            <img src="images/proloco-fosciandora-lupinaia.jpg" alt="Lupinaia borgo antico">
+                        </div>
+                        <div class="frazione-slide">
+                            <img src="images/lupinaia-2-fosciandora-pro-loco-garfagnanadream-leonardo-fiori.jpg" alt="Lupinaia vista artistica di Leonardo Fiori">
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="changeSlide(3, 0)"></span>
+                            <span class="dot" onclick="changeSlide(3, 1)"></span>
+                        </div>
                     </div>
                     <div class="frazione-info">
                         <h3>Lupinaia <span class="altitude">600m s.l.m.</span></h3>
@@ -1231,19 +1300,22 @@
                 
                 <!-- RIANA -->
                 <div class="frazione-box animate-on-scroll">
-                    <div class="frazione-images">
-                        <img src="images/proloco-fosciandora-riana.jpg" 
-                             alt="Riana borgo panoramico" 
-                             class="frazione-main-img">
-                        <img src="images/proloco-fosciandora-riana-garfagnanadream.jpg" 
-                             alt="Scorcio caratteristico di Riana" 
-                             class="frazione-thumb">
+                    <div class="frazione-slider" data-slider="4">
+                        <div class="frazione-slide active">
+                            <img src="images/proloco-fosciandora-riana.jpg" alt="Riana borgo panoramico">
+                        </div>
+                        <div class="frazione-slide">
+                            <img src="images/proloco-fosciandora-riana-garfagnanadream.jpg" alt="Scorcio caratteristico di Riana">
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="changeSlide(4, 0)"></span>
+                            <span class="dot" onclick="changeSlide(4, 1)"></span>
+                        </div>
                     </div>
                     <div class="frazione-info">
                         <h3>Riana <span class="altitude">520m s.l.m.</span></h3>
-                        <p>Il nome deriva da "terra abitata da ariani" (longobardi), e già nel IX secolo qui aveva proprietà il vescovo longobardo Pietro di Teupert. Il campanile dalla sagoma orientaleggiante, unico in Garfagnana, svetta sopra la chiesa che custodisce un prezioso Cristo nero ligneo del XVII secolo. I terrazzamenti coltivati a vigneto producono vini di eccellente qualità, mentre gli oliveti centenari regalano olio extravergine pregiato. Nel borgo è presente un bar-alimentari.</p>
+                        <p>Il nome deriva da "terra abitata da ariani" (longobardi), e già nel IX secolo qui aveva proprietà il vescovo longobardo Pietro di Teupert. Il campanile svetta sopra la chiesa che custodisce un prezioso Cristo nero ligneo del XVII secolo. I terrazzamenti coltivati a vigneto producono vini di eccellente qualità, mentre gli oliveti centenari regalano olio extravergine pregiato. Nel borgo è presente un bar-alimentari.</p>
                         <div class="frazione-tags">
-                            <span class="tag">Campanile orientale</span>
                             <span class="tag">Vigneti</span>
                             <span class="tag">Cristo nero</span>
                             <span class="tag">Prodotti tipici</span>
@@ -1253,13 +1325,17 @@
                 
                 <!-- TREPPIGNANA -->
                 <div class="frazione-box animate-on-scroll">
-                    <div class="frazione-images">
-                        <img src="images/proloco-fosciandora-treppignana.jpg" 
-                             alt="Treppignana vista del borgo" 
-                             class="frazione-main-img">
-                        <img src="images/proloco-fosciandora-treppignana-neve.jpg" 
-                             alt="Treppignana innevata d'inverno" 
-                             class="frazione-thumb">
+                    <div class="frazione-slider" data-slider="5">
+                        <div class="frazione-slide active">
+                            <img src="images/proloco-fosciandora-treppignana.jpg" alt="Treppignana vista del borgo">
+                        </div>
+                        <div class="frazione-slide">
+                            <img src="images/proloco-fosciandora-treppignana-neve.jpg" alt="Treppignana innevata d'inverno">
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="changeSlide(5, 0)"></span>
+                            <span class="dot" onclick="changeSlide(5, 1)"></span>
+                        </div>
                     </div>
                     <div class="frazione-info">
                         <h3>Treppignana <span class="altitude">650m s.l.m.</span></h3>
@@ -1275,13 +1351,17 @@
                 
                 <!-- MIGLIANO -->
                 <div class="frazione-box animate-on-scroll">
-                    <div class="frazione-images">
-                        <img src="images/proloco-fosciandora-migliano.jpg" 
-                             alt="Migliano sede comunale" 
-                             class="frazione-main-img">
-                        <img src="images/proloco-fosciandora-migliano-santuario-con-neve.jpg" 
-                             alt="Santuario della Stella innevato" 
-                             class="frazione-thumb">
+                    <div class="frazione-slider" data-slider="6">
+                        <div class="frazione-slide active">
+                            <img src="images/proloco-fosciandora-migliano.jpg" alt="Migliano sede comunale">
+                        </div>
+                        <div class="frazione-slide">
+                            <img src="images/proloco-fosciandora-migliano-santuario-con-neve.jpg" alt="Santuario della Stella innevato">
+                        </div>
+                        <div class="slider-dots">
+                            <span class="dot active" onclick="changeSlide(6, 0)"></span>
+                            <span class="dot" onclick="changeSlide(6, 1)"></span>
+                        </div>
                     </div>
                     <div class="frazione-info">
                         <h3>Migliano <span class="altitude">470m s.l.m.</span></h3>
@@ -1488,8 +1568,131 @@
          JAVASCRIPT
          ============================================ -->
     <script>
+        // Array delle immagini per la hero section
+        const heroImages = [
+            'images/proloco-fosciandora-panorama-treppignana.jpg',
+            'images/proloco-fosciandora-fosciandora.jpg',
+            'images/proloco-fosciandora-ceserana.jpg',
+            'images/proloco-fosciandora-lavilla.jpg',
+            'images/proloco-fosciandora-lupinaia.jpg',
+            'images/proloco-fosciandora-riana.jpg',
+            'images/proloco-fosciandora-migliano.jpg',
+            'images/proloco-fosciandora-strada-monti-autunno.jpg'
+        ];
+
+        let currentHeroImage = 0;
+        let heroInterval;
+
+        // Inizializza hero images
+        function initHeroImages() {
+            const heroBox = document.getElementById('heroImageBox');
+            
+            // Seleziona immagine random iniziale
+            currentHeroImage = Math.floor(Math.random() * heroImages.length);
+            
+            // Crea elemento immagine iniziale
+            const img = document.createElement('img');
+            img.src = heroImages[currentHeroImage];
+            img.alt = 'Paesaggio di Fosciandora';
+            img.className = 'hero-image active';
+            heroBox.appendChild(img);
+            
+            // Avvia slideshow automatico
+            heroInterval = setInterval(changeHeroImage, 5000);
+        }
+
+        // Cambia immagine hero con animazione swipe
+        function changeHeroImage() {
+            const heroBox = document.getElementById('heroImageBox');
+            const currentImg = heroBox.querySelector('.hero-image.active');
+            
+            // Seleziona nuova immagine random (diversa dalla corrente)
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * heroImages.length);
+            } while (newIndex === currentHeroImage);
+            
+            currentHeroImage = newIndex;
+            
+            // Crea nuova immagine
+            const newImg = document.createElement('img');
+            newImg.src = heroImages[currentHeroImage];
+            newImg.alt = 'Paesaggio di Fosciandora';
+            newImg.className = 'hero-image enter';
+            heroBox.appendChild(newImg);
+            
+            // Animazione exit per immagine corrente
+            currentImg.classList.remove('active');
+            currentImg.classList.add('exit');
+            
+            // Dopo un breve delay, anima l'entrata della nuova immagine
+            setTimeout(() => {
+                newImg.classList.remove('enter');
+                newImg.classList.add('active');
+            }, 50);
+            
+            // Rimuovi vecchia immagine dopo animazione
+            setTimeout(() => {
+                currentImg.remove();
+            }, 650);
+        }
+
+        // Slider frazioni
+        const sliderIntervals = [];
+
+        function initFrazioniSliders() {
+            document.querySelectorAll('.frazione-slider').forEach((slider, index) => {
+                // Avvia autoplay per ogni slider
+                sliderIntervals[index] = setInterval(() => {
+                    const slides = slider.querySelectorAll('.frazione-slide');
+                    const dots = slider.querySelectorAll('.dot');
+                    let activeIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+                    let nextIndex = (activeIndex + 1) % slides.length;
+                    
+                    changeSlide(index, nextIndex);
+                }, 6000);
+            });
+        }
+
+        function changeSlide(sliderIndex, slideIndex) {
+            const slider = document.querySelector(`[data-slider="${sliderIndex}"]`);
+            const slides = slider.querySelectorAll('.frazione-slide');
+            const dots = slider.querySelectorAll('.dot');
+            
+            // Rimuovi active da tutte le slides e dots
+            slides.forEach((slide, index) => {
+                if (index === slideIndex) {
+                    slide.classList.add('active');
+                    slide.classList.remove('exit');
+                } else if (slide.classList.contains('active')) {
+                    slide.classList.remove('active');
+                    slide.classList.add('exit');
+                    setTimeout(() => {
+                        slide.classList.remove('exit');
+                    }, 600);
+                }
+            });
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === slideIndex);
+            });
+            
+            // Reset interval per questo slider
+            clearInterval(sliderIntervals[sliderIndex]);
+            sliderIntervals[sliderIndex] = setInterval(() => {
+                let nextIndex = (slideIndex + 1) % slides.length;
+                changeSlide(sliderIndex, nextIndex);
+            }, 6000);
+        }
+
         // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function() {
+            // Inizializza hero images
+            initHeroImages();
+            
+            // Inizializza slider frazioni
+            initFrazioniSliders();
+            
             const navToggle = document.getElementById('navToggle');
             const navMenu = document.getElementById('navMenu');
             
