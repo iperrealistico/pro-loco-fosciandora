@@ -217,7 +217,7 @@
         }
 
         /* ============================================
-           HERO SECTION CON IMMAGINI RANDOMICHE E PALLINI
+           HERO SECTION CON FIX PER MOBILE iOS
            ============================================ */
         .hero {
             padding-top: 120px;
@@ -226,6 +226,7 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
+            position: relative;
         }
 
         .hero-container {
@@ -253,6 +254,7 @@
             margin-bottom: 2rem;
         }
 
+        /* FIX per mobile iOS - Stessa struttura delle frazioni */
         .hero-image-box {
             position: relative;
             overflow: hidden;
@@ -261,25 +263,32 @@
             height: 500px;
             user-select: none;
             cursor: grab;
+            background: var(--bg-light);
         }
 
         .hero-image-box:active {
             cursor: grabbing;
         }
 
-        .hero-image {
+        .hero-slide {
             position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-slide img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             object-position: center;
             pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.6s ease-out;
-        }
-
-        .hero-image.active {
-            opacity: 1;
+            display: block;
         }
 
         .hero-dots {
@@ -909,7 +918,7 @@
         }
 
         /* ============================================
-           SCROLL INDICATOR
+           SCROLL INDICATOR - FIX POSIZIONE MOBILE
            ============================================ */
         .scroll-indicator {
             position: absolute;
@@ -943,6 +952,15 @@
         @media (max-width: 768px) {
             .section {
                 padding: 80px 0 60px 0;
+            }
+
+            /* FIX per hero su mobile */
+            .hero {
+                padding-bottom: 120px; /* Più spazio per lo scroll indicator */
+            }
+
+            .scroll-indicator {
+                bottom: 1rem; /* Meno spazio dal fondo su mobile */
             }
 
             .nav-menu {
@@ -981,6 +999,7 @@
             .hero-container {
                 grid-template-columns: 1fr;
                 text-align: center;
+                gap: 3rem; /* Ridotto gap su mobile */
             }
             
             .hero-content {
@@ -991,8 +1010,10 @@
                 height: 400px;
             }
 
-            .hero-image {
+            .hero-slide img {
                 object-position: center;
+                -webkit-transform: translateZ(0); /* Fix per iOS */
+                transform: translateZ(0);
             }
             
             .frazione-box {
@@ -1748,31 +1769,8 @@
 
         let currentHeroImage = 0;
         let heroInterval;
-        let heroLoadedImages = [];
 
-        // Lazy loading delle immagini
-        function lazyLoadImage(src) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.onerror = reject;
-                img.src = src;
-            });
-        }
-
-        // Precarica le immagini
-        async function preloadHeroImages() {
-            for (let i = 0; i < heroImages.length; i++) {
-                try {
-                    const img = await lazyLoadImage(heroImages[i]);
-                    heroLoadedImages[i] = img;
-                } catch (error) {
-                    console.error(`Errore caricamento immagine ${heroImages[i]}:`, error);
-                }
-            }
-        }
-
-        // Inizializza hero images - FIX per mobile
+        // Inizializza hero images - NUOVO CODICE COME LE FRAZIONI
         function initHeroImages() {
             const heroBox = document.getElementById('heroImageBox');
             const heroDots = document.getElementById('heroDots');
@@ -1789,26 +1787,27 @@
                 heroDots.appendChild(dot);
             });
             
-            // Crea elemento immagine iniziale
+            // Crea slide container con immagine
+            const slide = document.createElement('div');
+            slide.className = 'hero-slide active';
             const img = document.createElement('img');
             img.src = heroImages[currentHeroImage];
             img.alt = 'Paesaggio di Fosciandora';
-            img.className = 'hero-image active';
-            heroBox.appendChild(img);
+            slide.appendChild(img);
+            heroBox.appendChild(slide);
             
-            // Avvia preload e slideshow
-            preloadHeroImages();
+            // Avvia slideshow
             heroInterval = setInterval(changeHeroImage, 5000);
         }
 
-        // Cambia immagine hero specifica - FIX per mobile
+        // Cambia immagine hero specifica
         function changeHeroImageTo(index) {
             if (index === currentHeroImage) return;
             
             clearInterval(heroInterval);
             const heroBox = document.getElementById('heroImageBox');
             const heroDots = document.getElementById('heroDots');
-            const currentImg = heroBox.querySelector('.hero-image.active');
+            const currentSlide = heroBox.querySelector('.hero-slide.active');
             
             currentHeroImage = index;
             
@@ -1817,31 +1816,33 @@
                 dot.classList.toggle('active', i === index);
             });
             
-            // Crea nuova immagine
-            const newImg = document.createElement('img');
-            newImg.src = heroImages[currentHeroImage];
-            newImg.alt = 'Paesaggio di Fosciandora';
-            newImg.className = 'hero-image';
-            heroBox.appendChild(newImg);
+            // Crea nuova slide
+            const newSlide = document.createElement('div');
+            newSlide.className = 'hero-slide';
+            const img = document.createElement('img');
+            img.src = heroImages[currentHeroImage];
+            img.alt = 'Paesaggio di Fosciandora';
+            newSlide.appendChild(img);
+            heroBox.appendChild(newSlide);
             
-            // Semplice fade transition
-            if (currentImg) {
-                currentImg.classList.remove('active');
+            // Fade transition
+            if (currentSlide) {
+                currentSlide.classList.remove('active');
                 setTimeout(() => {
-                    currentImg.remove();
+                    currentSlide.remove();
                 }, 600);
             }
             
-            // Attiva nuova immagine
+            // Attiva nuova slide
             setTimeout(() => {
-                newImg.classList.add('active');
+                newSlide.classList.add('active');
             }, 50);
             
             // Riavvia interval
             heroInterval = setInterval(changeHeroImage, 5000);
         }
 
-        // Cambia immagine hero con animazione swipe
+        // Cambia immagine hero random
         function changeHeroImage() {
             let newIndex;
             do {
@@ -1851,7 +1852,7 @@
             changeHeroImageTo(newIndex);
         }
 
-        // Drag functionality per hero - FIX iOS
+        // Drag functionality per hero
         function initHeroDrag() {
             const heroBox = document.getElementById('heroImageBox');
             let isDragging = false;
@@ -1878,18 +1879,16 @@
                 const deltaX = e.clientX - startX;
                 if (Math.abs(deltaX) > threshold) {
                     if (deltaX > 0) {
-                        // Swipe right - previous image
                         const prevIndex = (currentHeroImage - 1 + heroImages.length) % heroImages.length;
                         changeHeroImageTo(prevIndex);
                     } else {
-                        // Swipe left - next image
                         const nextIndex = (currentHeroImage + 1) % heroImages.length;
                         changeHeroImageTo(nextIndex);
                     }
                 }
             });
 
-            // Touch events - FIX per iOS
+            // Touch events
             heroBox.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
             }, { passive: true });
