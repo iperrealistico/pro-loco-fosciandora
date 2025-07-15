@@ -101,7 +101,7 @@
         }
 
         .section {
-            padding: 80px 0;
+            padding: 120px 0 80px 0;
         }
 
         .section-alt {
@@ -270,6 +270,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             transition: transform 0.6s ease-out, opacity 0.6s ease-out;
             transform-style: preserve-3d;
             backface-visibility: hidden;
@@ -402,8 +403,16 @@
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1200px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .feature-card {
@@ -412,6 +421,8 @@
             overflow: hidden;
             box-shadow: var(--shadow-md);
             transition: var(--transition);
+            display: flex;
+            flex-direction: column;
         }
 
         .feature-card:hover {
@@ -453,11 +464,26 @@
 
         .feature-content {
             padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .feature-content h3 {
             color: var(--primary-color);
             margin-bottom: 1rem;
+        }
+
+        .feature-content p {
+            flex-grow: 1;
+        }
+
+        .seasons-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+            padding-top: 1rem;
+            font-size: 1.5rem;
         }
 
         /* ============================================
@@ -518,6 +544,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             pointer-events: none;
         }
 
@@ -627,14 +654,15 @@
             width: 100%;
             height: 100%;
             border: 0;
-        }
-
-        /* Nascondi box bianco Google Maps */
-        .map-wrapper iframe {
             filter: contrast(1.1) brightness(0.95);
         }
 
-        /* CSS per nascondere elementi Google Maps */
+        /* Nasconde il box di navigazione Google Maps */
+        iframe[src*="google.com/maps"] {
+            filter: contrast(1.1) brightness(0.95);
+        }
+
+        /* CSS per nascondere elementi Google Maps specifici */
         .gm-style .gm-style-iw,
         .gm-style .gm-style-iw-c,
         .gm-style .gm-style-iw-d,
@@ -642,6 +670,11 @@
         .gm-style-iw-t::after,
         .gm-style-iw-tc::after,
         .gm-ui-hover-effect {
+            display: none !important;
+        }
+
+        /* Nasconde il box di navigazione specifico */
+        #mapDiv > div > div.gm-style > div:nth-child(4) > div {
             display: none !important;
         }
 
@@ -917,6 +950,10 @@
            RESPONSIVE DESIGN
            ============================================ */
         @media (max-width: 768px) {
+            .section {
+                padding: 80px 0 60px 0;
+            }
+
             .nav-menu {
                 position: fixed;
                 left: -100%;
@@ -962,6 +999,10 @@
             .hero-image-box {
                 height: 400px;
             }
+
+            .hero-image {
+                object-position: center;
+            }
             
             .frazione-box {
                 grid-template-columns: 1fr;
@@ -970,13 +1011,13 @@
             .frazione-slider {
                 height: 250px;
             }
+
+            .frazione-slide img {
+                object-position: center;
+            }
             
             .contact-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .section {
-                padding: 60px 0;
             }
 
             .map-wrapper {
@@ -1024,7 +1065,7 @@
             padding: 12px 20px;
             border-radius: var(--radius);
             transition: all 0.3s ease;
-            margin-top: 1rem;
+            margin-top: auto;
             border: 2px solid var(--primary-color);
         }
 
@@ -1034,12 +1075,6 @@
             color: white;
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
-        }
-
-        .difficulty-badges {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
         }
 
         .badge {
@@ -1062,13 +1097,6 @@
         .badge-hard {
             background: #ffebee;
             color: #c62828;
-        }
-
-        .seasons-icons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            font-size: 1.5rem;
         }
 
         .cta-box {
@@ -1101,13 +1129,6 @@
         @media (max-width: 1024px) {
             .frazione-slider {
                 height: 280px;
-            }
-            
-            .frazione-slide img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                object-position: center;
             }
         }
 
@@ -1220,11 +1241,6 @@
                                 <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
                             </svg>
                         </a>
-                        <span class="difficulty-badges">
-                            <span class="badge badge-easy">Facile</span>
-                            <span class="badge badge-medium">Medio</span>
-                            <span class="badge badge-hard">Difficile</span>
-                        </span>
                     </div>
                 </div>
                 
@@ -1375,7 +1391,6 @@
                         <div class="frazione-tags">
                             <span class="tag">Vista panoramica</span>
                             <span class="tag">Arte sacra</span>
-                            <span class="tag">Villa storica</span>
                             <span class="tag">Sentieri natura</span>
                         </div>
                     </div>
@@ -1845,7 +1860,7 @@
             changeHeroImageTo(newIndex);
         }
 
-        // Drag functionality per hero
+        // Drag functionality per hero - FIX iOS
         function initHeroDrag() {
             const heroBox = document.getElementById('heroImageBox');
             let isDragging = false;
@@ -1883,14 +1898,10 @@
                 }
             });
 
-            // Touch events
+            // Touch events - FIX per iOS
             heroBox.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
-            });
-
-            heroBox.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-            });
+            }, { passive: true });
 
             heroBox.addEventListener('touchend', (e) => {
                 const deltaX = e.changedTouches[0].clientX - startX;
@@ -1903,7 +1914,7 @@
                         changeHeroImageTo(nextIndex);
                     }
                 }
-            });
+            }, { passive: true });
         }
 
         // Slider frazioni
@@ -1964,14 +1975,10 @@
                 }
             });
 
-            // Touch events
+            // Touch events - FIX per iOS
             slider.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
-            });
-
-            slider.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-            });
+            }, { passive: true });
 
             slider.addEventListener('touchend', (e) => {
                 const deltaX = e.changedTouches[0].clientX - startX;
@@ -1987,7 +1994,7 @@
                         changeSlide(sliderIndex, nextIndex);
                     }
                 }
-            });
+            }, { passive: true });
         }
 
         function changeSlide(sliderIndex, slideIndex) {
