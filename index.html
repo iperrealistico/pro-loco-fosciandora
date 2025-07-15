@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
+    <!-- Favicon inline SVG -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNCIgZmlsbD0iIzU3MzAyZiIvPgo8cGF0aCBkPSJNNiAyNkwxNiA4TDI2IDI2SDYiIGZpbGw9IiNkNGE1NzQiLz4KPHN2ZyB4PSI4IiB5PSIxNiIgd2lkdGg9IjE2IiBoZWlnaHQ9IjEwIj4KPHN2ZyB4PSIwIiB5PSIwIiB3aWR0aD0iMTYiIGhlaWdodD0iMTAiPgo8cGF0aCBkPSJNMCAxMEwxNiAxMFYxMEgwWiIgZmlsbD0iIzhmYmM4ZiIvPgo8L3N2Zz4KPC9zdmc+Cjwvc3ZnPgo=" type="image/svg+xml">
+    
     <!-- SEO Meta Tags -->
     <title>Pro Loco Fosciandora - Trekking, Natura e Tradizioni in Garfagnana</title>
     <meta name="description" content="Scopri Fosciandora e le sue sette frazioni nella Garfagnana. Percorsi trekking, mountain bike, natura incontaminata tra le Alpi Apuane. Eventi, tradizioni e sapori locali.">
@@ -256,7 +259,6 @@
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
             height: 500px;
-            perspective: 1000px;
             user-select: none;
             cursor: grab;
         }
@@ -271,25 +273,13 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
-            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
-            transform-style: preserve-3d;
-            backface-visibility: hidden;
             pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-out;
         }
 
         .hero-image.active {
-            transform: translateX(0) rotateY(0deg);
             opacity: 1;
-        }
-
-        .hero-image.exit {
-            transform: translateX(-100%) rotateY(-30deg);
-            opacity: 0;
-        }
-
-        .hero-image.enter {
-            transform: translateX(100%) rotateY(30deg);
-            opacity: 0;
         }
 
         .hero-dots {
@@ -476,6 +466,7 @@
 
         .feature-content p {
             flex-grow: 1;
+            margin-bottom: 1.5rem;
         }
 
         .seasons-icons {
@@ -1781,7 +1772,7 @@
             }
         }
 
-        // Inizializza hero images
+        // Inizializza hero images - FIX per mobile
         function initHeroImages() {
             const heroBox = document.getElementById('heroImageBox');
             const heroDots = document.getElementById('heroDots');
@@ -1810,7 +1801,7 @@
             heroInterval = setInterval(changeHeroImage, 5000);
         }
 
-        // Cambia immagine hero specifica
+        // Cambia immagine hero specifica - FIX per mobile
         function changeHeroImageTo(index) {
             if (index === currentHeroImage) return;
             
@@ -1830,21 +1821,21 @@
             const newImg = document.createElement('img');
             newImg.src = heroImages[currentHeroImage];
             newImg.alt = 'Paesaggio di Fosciandora';
-            newImg.className = 'hero-image enter';
+            newImg.className = 'hero-image';
             heroBox.appendChild(newImg);
             
-            // Animazione
-            currentImg.classList.remove('active');
-            currentImg.classList.add('exit');
+            // Semplice fade transition
+            if (currentImg) {
+                currentImg.classList.remove('active');
+                setTimeout(() => {
+                    currentImg.remove();
+                }, 600);
+            }
             
+            // Attiva nuova immagine
             setTimeout(() => {
-                newImg.classList.remove('enter');
                 newImg.classList.add('active');
             }, 50);
-            
-            setTimeout(() => {
-                currentImg.remove();
-            }, 650);
             
             // Riavvia interval
             heroInterval = setInterval(changeHeroImage, 5000);
