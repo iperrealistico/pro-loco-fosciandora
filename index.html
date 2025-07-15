@@ -57,6 +57,7 @@
 
         html {
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
         body {
@@ -64,6 +65,7 @@
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--bg-light);
+            overflow-x: hidden;
         }
 
         /* ============================================
@@ -212,7 +214,7 @@
         }
 
         /* ============================================
-           HERO SECTION CON IMMAGINI RANDOMICHE
+           HERO SECTION CON IMMAGINI RANDOMICHE E PALLINI
            ============================================ */
         .hero {
             padding-top: 120px;
@@ -255,6 +257,12 @@
             box-shadow: var(--shadow-lg);
             height: 500px;
             perspective: 1000px;
+            user-select: none;
+            cursor: grab;
+        }
+
+        .hero-image-box:active {
+            cursor: grabbing;
         }
 
         .hero-image {
@@ -265,6 +273,7 @@
             transition: transform 0.6s ease-out, opacity 0.6s ease-out;
             transform-style: preserve-3d;
             backface-visibility: hidden;
+            pointer-events: none;
         }
 
         .hero-image.active {
@@ -280,6 +289,31 @@
         .hero-image.enter {
             transform: translateX(100%) rotateY(30deg);
             opacity: 0;
+        }
+
+        .hero-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .hero-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hero-dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 4px;
         }
 
         /* ============================================
@@ -427,7 +461,7 @@
         }
 
         /* ============================================
-           FRAZIONI GRID CON SLIDER
+           FRAZIONI GRID CON SLIDER E DRAG
            ============================================ */
         .frazioni-grid {
             display: grid;
@@ -453,6 +487,12 @@
             position: relative;
             height: 350px;
             overflow: hidden;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .frazione-slider:active {
+            cursor: grabbing;
         }
 
         .frazione-slide {
@@ -478,6 +518,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            pointer-events: none;
         }
 
         .slider-dots {
@@ -588,6 +629,22 @@
             border: 0;
         }
 
+        /* Nascondi box bianco Google Maps */
+        .map-wrapper iframe {
+            filter: contrast(1.1) brightness(0.95);
+        }
+
+        /* CSS per nascondere elementi Google Maps */
+        .gm-style .gm-style-iw,
+        .gm-style .gm-style-iw-c,
+        .gm-style .gm-style-iw-d,
+        .gm-style-iw-chr,
+        .gm-style-iw-t::after,
+        .gm-style-iw-tc::after,
+        .gm-ui-hover-effect {
+            display: none !important;
+        }
+
         /* ============================================
            ROUTES E CONTATTI
            ============================================ */
@@ -679,6 +736,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .contact-item h4 {
@@ -930,6 +988,27 @@
                 margin-bottom: 1rem;
                 max-width: 100%;
             }
+
+            .contact-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .contact-icon {
+                align-self: flex-start;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .routes-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* ============================================
@@ -940,12 +1019,21 @@
             align-items: center;
             gap: 0.5rem;
             color: var(--primary-color);
-            font-weight: 500;
-            transition: gap 0.3s ease;
+            font-weight: 600;
+            background: var(--bg-light);
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            border: 2px solid var(--primary-color);
         }
 
         .link-arrow:hover {
             gap: 0.75rem;
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .difficulty-badges {
@@ -999,6 +1087,35 @@
         .team-compact p {
             margin: 0.25rem 0;
         }
+
+        /* Prevenzione overflow orizzontale */
+        .container,
+        .nav-container,
+        .hero-container,
+        .map-container {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* Fix per immagini che non si adattano */
+        @media (max-width: 1024px) {
+            .frazione-slider {
+                height: 280px;
+            }
+            
+            .frazione-slide img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .frazione-slider {
+                height: 200px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1019,7 +1136,7 @@
             
             <ul class="nav-menu" id="navMenu">
                 <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#natura-trekking" class="nav-link">Natura & Trekking</a></li>
+                <li><a href="#la-nostra-offerta" class="nav-link">La Nostra Offerta</a></li>
                 <li><a href="#chi-siamo" class="nav-link">Chi Siamo</a></li>
                 <li><a href="#scopri" class="nav-link">Il Territorio</a></li>
                 <li><a href="#come-arrivare" class="nav-link">Come Arrivare</a></li>
@@ -1040,6 +1157,7 @@
             </div>
             
             <div class="hero-image-box animate-scale" id="heroImageBox">
+                <div class="hero-dots" id="heroDots"></div>
                 <!-- Le immagini vengono caricate dinamicamente -->
             </div>
         </div>
@@ -1053,13 +1171,13 @@
     </section>
 
     <!-- ============================================
-         NATURA E TREKKING SECTION
+         LA NOSTRA OFFERTA SECTION
          ============================================ -->
-    <section class="section section-featured" id="natura-trekking">
+    <section class="section section-featured" id="la-nostra-offerta">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Natura, Trekking e Mountain Bike</h2>
-                <p class="section-subtitle">Oltre 100 km di sentieri attraverso boschi secolari, alpeggi e crinali panoramici tra le Alpi Apuane e l'Appennino Tosco-Emiliano</p>
+                <h2 class="section-title">La Nostra Offerta</h2>
+                <p class="section-subtitle">Scopri tutto quello che Fosciandora ha da offrire: dalla natura incontaminata alle tradizioni millenarie, dall'ospitalità autentica alle feste che celebrano la nostra terra</p>
             </div>
             
             <div class="features-grid">
@@ -1127,6 +1245,48 @@
                             <span title="Estate">☀️</span>
                             <span title="Autunno">🍂</span>
                             <span title="Inverno">❄️</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-image-wrapper">
+                        <img src="images/proloco-fosciandora-migliano.jpg" 
+                             alt="Ospitalità a Fosciandora" 
+                             class="feature-image">
+                        <div class="feature-overlay">
+                            <span class="feature-tag">Ospitalità</span>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Ospitalità</h3>
+                        <p>Fosciandora offre una selezione di <strong>case vacanze</strong> e <strong>ville immerse nella natura</strong>, perfette per soggiorni rilassanti tra i boschi della Garfagnana. Strutture autentiche e accoglienti per vivere appieno l'esperienza montana, con viste panoramiche e comfort moderni in un ambiente tradizionale.</p>
+                        <div class="seasons-icons">
+                            <span title="Villa">🏡</span>
+                            <span title="Relax">🌿</span>
+                            <span title="Vista">🏔️</span>
+                            <span title="Comfort">✨</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-card animate-on-scroll">
+                    <div class="feature-image-wrapper">
+                        <img src="images/proloco-fosciandora-riana.jpg" 
+                             alt="Feste e tradizioni" 
+                             class="feature-image">
+                        <div class="feature-overlay">
+                            <span class="feature-tag">Tradizioni</span>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Feste e Sagre</h3>
+                        <p>Le nostre tradizioni rivivono nella <strong>Festa del Vino</strong> e nella <strong>Festa della Castagna</strong>, eventi che celebrano i sapori autentici della montagna. Sagre paesane, musica tradizionale e prodotti tipici creano momenti di autentica convivialità tra residenti e visitatori.</p>
+                        <div class="seasons-icons">
+                            <span title="Vino">🍷</span>
+                            <span title="Castagne">🌰</span>
+                            <span title="Musica">🎵</span>
+                            <span title="Festa">🎉</span>
                         </div>
                     </div>
                 </div>
@@ -1582,13 +1742,46 @@
 
         let currentHeroImage = 0;
         let heroInterval;
+        let heroLoadedImages = [];
+
+        // Lazy loading delle immagini
+        function lazyLoadImage(src) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        }
+
+        // Precarica le immagini
+        async function preloadHeroImages() {
+            for (let i = 0; i < heroImages.length; i++) {
+                try {
+                    const img = await lazyLoadImage(heroImages[i]);
+                    heroLoadedImages[i] = img;
+                } catch (error) {
+                    console.error(`Errore caricamento immagine ${heroImages[i]}:`, error);
+                }
+            }
+        }
 
         // Inizializza hero images
         function initHeroImages() {
             const heroBox = document.getElementById('heroImageBox');
+            const heroDots = document.getElementById('heroDots');
             
             // Seleziona immagine random iniziale
             currentHeroImage = Math.floor(Math.random() * heroImages.length);
+            
+            // Crea dots
+            heroDots.innerHTML = '';
+            heroImages.forEach((_, index) => {
+                const dot = document.createElement('span');
+                dot.className = `hero-dot ${index === currentHeroImage ? 'active' : ''}`;
+                dot.onclick = () => changeHeroImageTo(index);
+                heroDots.appendChild(dot);
+            });
             
             // Crea elemento immagine iniziale
             const img = document.createElement('img');
@@ -1597,22 +1790,26 @@
             img.className = 'hero-image active';
             heroBox.appendChild(img);
             
-            // Avvia slideshow automatico
+            // Avvia preload e slideshow
+            preloadHeroImages();
             heroInterval = setInterval(changeHeroImage, 5000);
         }
 
-        // Cambia immagine hero con animazione swipe
-        function changeHeroImage() {
+        // Cambia immagine hero specifica
+        function changeHeroImageTo(index) {
+            if (index === currentHeroImage) return;
+            
+            clearInterval(heroInterval);
             const heroBox = document.getElementById('heroImageBox');
+            const heroDots = document.getElementById('heroDots');
             const currentImg = heroBox.querySelector('.hero-image.active');
             
-            // Seleziona nuova immagine random (diversa dalla corrente)
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * heroImages.length);
-            } while (newIndex === currentHeroImage);
+            currentHeroImage = index;
             
-            currentHeroImage = newIndex;
+            // Aggiorna dots
+            heroDots.querySelectorAll('.hero-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
             
             // Crea nuova immagine
             const newImg = document.createElement('img');
@@ -1621,20 +1818,92 @@
             newImg.className = 'hero-image enter';
             heroBox.appendChild(newImg);
             
-            // Animazione exit per immagine corrente
+            // Animazione
             currentImg.classList.remove('active');
             currentImg.classList.add('exit');
             
-            // Dopo un breve delay, anima l'entrata della nuova immagine
             setTimeout(() => {
                 newImg.classList.remove('enter');
                 newImg.classList.add('active');
             }, 50);
             
-            // Rimuovi vecchia immagine dopo animazione
             setTimeout(() => {
                 currentImg.remove();
             }, 650);
+            
+            // Riavvia interval
+            heroInterval = setInterval(changeHeroImage, 5000);
+        }
+
+        // Cambia immagine hero con animazione swipe
+        function changeHeroImage() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * heroImages.length);
+            } while (newIndex === currentHeroImage);
+            
+            changeHeroImageTo(newIndex);
+        }
+
+        // Drag functionality per hero
+        function initHeroDrag() {
+            const heroBox = document.getElementById('heroImageBox');
+            let isDragging = false;
+            let startX = 0;
+            let threshold = 50;
+
+            // Mouse events
+            heroBox.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                heroBox.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+            });
+
+            document.addEventListener('mouseup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                heroBox.style.cursor = 'grab';
+                
+                const deltaX = e.clientX - startX;
+                if (Math.abs(deltaX) > threshold) {
+                    if (deltaX > 0) {
+                        // Swipe right - previous image
+                        const prevIndex = (currentHeroImage - 1 + heroImages.length) % heroImages.length;
+                        changeHeroImageTo(prevIndex);
+                    } else {
+                        // Swipe left - next image
+                        const nextIndex = (currentHeroImage + 1) % heroImages.length;
+                        changeHeroImageTo(nextIndex);
+                    }
+                }
+            });
+
+            // Touch events
+            heroBox.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+
+            heroBox.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            });
+
+            heroBox.addEventListener('touchend', (e) => {
+                const deltaX = e.changedTouches[0].clientX - startX;
+                if (Math.abs(deltaX) > threshold) {
+                    if (deltaX > 0) {
+                        const prevIndex = (currentHeroImage - 1 + heroImages.length) % heroImages.length;
+                        changeHeroImageTo(prevIndex);
+                    } else {
+                        const nextIndex = (currentHeroImage + 1) % heroImages.length;
+                        changeHeroImageTo(nextIndex);
+                    }
+                }
+            });
         }
 
         // Slider frazioni
@@ -1642,6 +1911,8 @@
 
         function initFrazioniSliders() {
             document.querySelectorAll('.frazione-slider').forEach((slider, index) => {
+                initSliderDrag(slider, index);
+                
                 // Avvia autoplay per ogni slider
                 sliderIntervals[index] = setInterval(() => {
                     const slides = slider.querySelectorAll('.frazione-slide');
@@ -1651,6 +1922,71 @@
                     
                     changeSlide(index, nextIndex);
                 }, 6000);
+            });
+        }
+
+        function initSliderDrag(slider, sliderIndex) {
+            let isDragging = false;
+            let startX = 0;
+            let threshold = 50;
+
+            // Mouse events
+            slider.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                slider.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+            });
+
+            document.addEventListener('mouseup', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                slider.style.cursor = 'grab';
+                
+                const deltaX = e.clientX - startX;
+                if (Math.abs(deltaX) > threshold) {
+                    const slides = slider.querySelectorAll('.frazione-slide');
+                    const activeIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+                    
+                    if (deltaX > 0) {
+                        // Swipe right - previous slide
+                        const prevIndex = (activeIndex - 1 + slides.length) % slides.length;
+                        changeSlide(sliderIndex, prevIndex);
+                    } else {
+                        // Swipe left - next slide
+                        const nextIndex = (activeIndex + 1) % slides.length;
+                        changeSlide(sliderIndex, nextIndex);
+                    }
+                }
+            });
+
+            // Touch events
+            slider.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+
+            slider.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            });
+
+            slider.addEventListener('touchend', (e) => {
+                const deltaX = e.changedTouches[0].clientX - startX;
+                if (Math.abs(deltaX) > threshold) {
+                    const slides = slider.querySelectorAll('.frazione-slide');
+                    const activeIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+                    
+                    if (deltaX > 0) {
+                        const prevIndex = (activeIndex - 1 + slides.length) % slides.length;
+                        changeSlide(sliderIndex, prevIndex);
+                    } else {
+                        const nextIndex = (activeIndex + 1) % slides.length;
+                        changeSlide(sliderIndex, nextIndex);
+                    }
+                }
             });
         }
 
@@ -1689,6 +2025,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Inizializza hero images
             initHeroImages();
+            initHeroDrag();
             
             // Inizializza slider frazioni
             initFrazioniSliders();
