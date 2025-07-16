@@ -50,7 +50,7 @@
         }
 
         /* ============================================
-           RESET E STILI BASE - FIX SCROLL ISSUES
+           RESET E STILI BASE
            ============================================ */
         * {
             margin: 0;
@@ -61,8 +61,6 @@
         html {
             scroll-behavior: smooth;
             overflow-x: hidden;
-            overflow-y: auto;
-            height: 100%;
         }
 
         body {
@@ -71,24 +69,6 @@
             color: var(--text-color);
             background-color: var(--bg-light);
             overflow-x: hidden;
-            overflow-y: auto;
-            height: 100%;
-            position: relative;
-        }
-
-        /* Previene scroll interno indesiderato */
-        .container,
-        .nav-container,
-        .hero-container,
-        .map-container,
-        .section,
-        .cards-grid,
-        .features-grid,
-        .frazioni-grid,
-        .routes-container,
-        .contact-grid {
-            overflow-x: hidden;
-            overflow-y: visible;
         }
 
         /* ============================================
@@ -125,7 +105,6 @@
 
         .section {
             padding: 120px 0 80px 0;
-            position: relative;
         }
 
         .section-alt {
@@ -1150,6 +1129,15 @@
             margin: 0.25rem 0;
         }
 
+        /* Prevenzione overflow orizzontale */
+        .container,
+        .nav-container,
+        .hero-container,
+        .map-container {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
         /* Fix per immagini che non si adattano */
         @media (max-width: 1024px) {
             .frazione-slider {
@@ -1162,55 +1150,9 @@
                 height: 200px;
             }
         }
-
-        /* ============================================
-           FIX SCROLL DURANTE CARICAMENTO
-           ============================================ */
-        body.loading {
-            overflow: hidden;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-light);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
-
-        .loading-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
-<body class="loading">
-    <!-- Loading overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-    </div>
-
+<body>
     <!-- ============================================
          NAVBAR
          ============================================ -->
@@ -1827,26 +1769,6 @@
 
         let currentHeroImage = 0;
         let heroInterval;
-
-        // Gestione loading overlay e scroll durante caricamento
-        window.addEventListener('load', function() {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const body = document.body;
-            
-            // Nascondi overlay dopo il caricamento
-            setTimeout(() => {
-                loadingOverlay.classList.add('hidden');
-                body.classList.remove('loading');
-            }, 500);
-        });
-
-        // Disabilita scroll se in loading
-        window.addEventListener('wheel', function(e) {
-            if (document.body.classList.contains('loading')) {
-                e.preventDefault();
-                return false;
-            }
-        }, { passive: false });
 
         // Inizializza hero images
         function initHeroImages() {
